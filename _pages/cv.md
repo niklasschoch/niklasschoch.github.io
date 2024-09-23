@@ -4,7 +4,7 @@ title: "CV"
 permalink: /cv/
 author_profile: true
 redirect_from:
-  - /resume
+  - /files/CV_Niklas_Schoch_academic.pdf
 ---
 
 {% include base_path %}

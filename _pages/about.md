@@ -7,4 +7,4 @@ redirect_from:
   - /about.html
 ---
 
-Welcome to my webpage!
+Salut! Welcome to my webpage!

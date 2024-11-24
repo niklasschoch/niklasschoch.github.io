@@ -21,7 +21,7 @@ repository               : "academicpages/academicpages.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "Profile_Webste.JPG"
+  avatar           : "Profile.png"
   name             : "Niklas Schoch"
   bio              : "Short biography for the left-hand sidebar"
   location         : "Paris"

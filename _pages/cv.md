@@ -1,7 +1,7 @@
 ---
 layout: archive
 title: "CV"
-title: "Download my resume: [here](https://niklasschoch.github.io/files/CV.pdf)"
+title: "Download my resume: [here](https://niklasschoch.github.io/files/CV_Niklas_Schoch.pdf)"
 author_profile: true
 redirect_from:
   - /resume

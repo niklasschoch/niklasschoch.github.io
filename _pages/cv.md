@@ -4,7 +4,7 @@ title: "CV"
 title: "Download my resume: [here](https://niklasschoch.github.io/files/CV_Niklas_Schoch.pdf)"
 author_profile: true
 redirect_from:
-  - /files
+  - /resume
 ---
 
 {% include base_path %}

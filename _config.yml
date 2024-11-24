@@ -21,18 +21,18 @@ repository               : "academicpages/academicpages.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.png"
-  name             : "Your Sidebar Name"
-  pronouns         : # example: "she/her"  
+  avatar           : "Profile_Webste.JPG"
+  name             : "Niklas Schoch"
   bio              : "Short biography for the left-hand sidebar"
-  location         : "Earth"
+  location         : "Paris"
   employer         : "Sciences Po Paris"
   uri              : # URL
   email            : "niklas.schoch@sciencespo.fr" 
 
   # Academic websites
   googlescholar    : "https://scholar.google.com/citations?user=PmKEITwAAAAJ&hl=de&oi=ao"
-
+  linkedin         : "https://www.linkedin.com/in/niklas-schoch-64534086/"
+  
 # Publication Category - The following the list of publication categories and their headings
 publication_category:
   manuscripts:

@@ -1,5 +1,5 @@
 ---
-title: "Paper Title Number 3"
+title: "Climate Finance and Emission Reductions: What Do the Last Twnety Years Tell Us?"
 collection: publications
 category: manuscripts
 permalink: /publication/2015-10-01-paper-title-number-3

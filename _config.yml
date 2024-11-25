@@ -21,7 +21,7 @@ repository               : "niklasschoch/niklasschoch.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "/images/Profile.png"
+  avatar           : "profile.png"
   name             : "Niklas Schoch"
   bio              : "PhD student in Economics"
   location         : "Paris"

@@ -3,7 +3,7 @@ title: "Climate Finance and Emission Reductions: What Do the Last Twenty Years T
 collection: publications
 category: manuscripts
 permalink: /publication/Finance
-excerpt: 'Climate Finance'date: 
+excerpt: 'Climate Finance'
 date: 2010-10-01
 venue: 'ZEW Discussion Paper'
 slidesurl: 'http://academicpages.github.io/files/slides2.pdf'

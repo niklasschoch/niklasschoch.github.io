@@ -3,6 +3,8 @@ title: "Climate Finance and Emission Reductions: What Do the Last Twenty Years T
 collection: publications
 category: manuscripts
 permalink: /publication/Finance
+excerpt: 'We examine'
+date: 2021-18-03
 
 ---
 

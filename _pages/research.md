@@ -6,7 +6,6 @@ author_profile: true
 ---
 
 {% assign pubs = site.publications | sort: 'date' | reverse %}
-
 {% assign categories = "Publications,Working Paper,Work in Progress" | split: "," %}
 
 {% for category in categories %}
@@ -15,18 +14,10 @@ author_profile: true
 {% assign items = pubs | where: "category", category %}
 {% for item in items %}
 <div style="margin-bottom: 2rem;">
-<p>
-  <strong>{{ item.title }}</strong>
-  {% if item.authors %} {{ item.authors }}{% endif %}
-  {% if item.date and category != "Work in Progress" %} ({{ item.date | date: "%Y" }}){% endif %}
-</p>
-
-{% if item.citation %}
+  <p><strong>{{ item.title }}</strong></p>
   <p>{{ item.citation }}</p>
-{% endif %}
-
   {% if item.venue %}
-    <p><em>{{ item.venue }}</em></p>
+    <p><em>{{ item.venue }}</em>{% if item.date %} ({{ item.date | date: "%Y" }}){% endif %}</p>
   {% endif %}
 
   {% if item.links %}

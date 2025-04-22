@@ -3,7 +3,7 @@ title: "Climate Finance and Emission Reductions: What Do the Last Twenty Years T
 date: 2021-01-01
 collection: publications
 category: Working Paper
-citation: 'Gavard, C. & Schoch, N.'
+citation: 'Gavard, C. & Schoch, N. (2021)'
 venue: ZEW Discussion Paper No. 21-01 (Submitted)
 links:
   - label: "Working Paper"

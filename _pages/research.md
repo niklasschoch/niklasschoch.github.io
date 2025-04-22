@@ -18,11 +18,11 @@ Welcome to my research page.
 {% for item in items %}
 - **{{ item.title }}**  
   {{ item.citation }}  
-  {% if item.pdf %}
-    [PDF]({{ item.pdf }})
-  {% elsif item.external_url %}
-    [Link]({{ item.external_url }})
-  {% endif %}
+{% if item.links %}
+  {% for link in item.links %}
+    [{{ link.label }}]({{ link.url }}){% if forloop.last == false %} | {% endif %}
+  {% endfor %}
+{% endif %}
 {% endfor %}
 
 {% endfor %}

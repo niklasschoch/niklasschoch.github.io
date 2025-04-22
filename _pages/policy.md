@@ -5,9 +5,13 @@ layout: single
 author_profile: true
 ---
 
+Here is a selection of policy reports and briefs I have contributed to.
+
+{% assign policies = site.policy | sort: "date" | reverse %}
 <ul>
-  <li>"Electricity 2024: Analysis and forecast to 2026", <em>International Energy Agency (IEA) Report </em> (with Eren Çam, Zoe Hungerford, Francys Pinto Miranda and Carlos David Yáñez de León)</li>
-  <li>"Carbon pricing and its implications in input-output networks: the case of France", <em>Conseil d’analyse économique, Focus No. 96, 2023</em> (with Isabelle Mejean)</li>
-  <li>H<sub>2</sub> - Förderkompass: Kriterien und Instrumente zur Förderung von Wasserstoffanwendungen für den Markthochlauf, <em>EWI Policy Study, 2022</em> (in German, with Lena Pickert, Patricia Wild and Konstantin Gruber)</li>
-  <li>"Regulatorische (Fehl-)Anreize bei der Produktion von grünem Wasserstoff", <em>EWI Policy Brief, 2022</em> (in German, with Eren Çam and Samir Jeddi)</li>
+{% for item in policies %}
+  <li>
+    "{{ item.title }}", <em>{{ item.venue }}</em>{% if item.date %}, {{ item.date | date: "%Y" }}{% endif %}{% if item.authors %} ({{ item.authors }}){% endif %}
+  </li>
+{% endfor %}
 </ul>

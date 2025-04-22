@@ -5,8 +5,6 @@ layout: single
 author_profile: true
 ---
 
-Welcome to my research page.
-
 {% assign pubs = site.publications | sort: 'date' | reverse %}
 {% assign categories = "Publications,Working Paper,Work in Progress" | split: "," %}
 

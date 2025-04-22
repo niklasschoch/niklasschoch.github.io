@@ -17,7 +17,7 @@ author_profile: true
   <p><strong>{{ item.title }}</strong></p>
   <p>{{ item.citation }}</p>
   {% if item.venue %}
-    <p><em>{{ item.venue }}</em>{% if item.date %} ({{ item.date | date: "%Y" }}){% endif %}</p>
+    <p><em>{{ item.venue }}</em></p>
   {% endif %}
 
   {% if item.links %}
@@ -27,4 +27,6 @@ author_profile: true
   {% endif %}
 </div>
 {% endfor %}
+{% endfor %}
+
 {% endfor %}

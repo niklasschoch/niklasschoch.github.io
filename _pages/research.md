@@ -18,27 +18,27 @@ Welcome to my research page.
 <div style="margin-bottom: 2rem;">
   <p>
     <strong>{{ item.title }}</strong>{% if item.venue %}, <em>{{ item.venue }}</em>{% endif %}
-    {% if item.citation %} ({{ item.citation }}), with {% endif %}
+    {% if item.citation %}, {{ item.citation }}{% endif %}
     {% if category != "Work in Progress" and item.authors %}
+      , with 
       {% assign author_count = item.authors | size %}
       {% if author_count == 1 %}
-        {{ item.authors[0] }}
+        {{ item.authors[0] -}}
       {% elsif author_count == 2 %}
-        {{ item.authors[0] }} and {{ item.authors[1] }}
-        {% else %}
-          {% for author in item.authors %}
-            {% assign i = forloop.index0 %}
-            {% assign last = author_count | minus: 1 %}
-            {% if i < last - 1 %}
-              {{ author }}, 
-            {% elsif i == last - 1 %}
-              {{ author }} and 
-            {% else %}
-              {{ author -}}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
-      .
+        {{ item.authors[0] }} and {{ item.authors[1] -}}
+      {% else %}
+        {% for author in item.authors %}
+          {% assign i = forloop.index0 %}
+          {% assign last = author_count | minus: 1 %}
+          {% if i < last - 1 %}
+            {{ author }},
+          {% elsif i == last - 1 %}
+            {{ author }} and
+          {% else %}
+            {{ author -}}
+          {% endif %}
+        {% endfor %}
+      {% endif -%}.
     {% endif %}
   </p>
 

@@ -5,8 +5,6 @@ layout: single
 author_profile: true
 ---
 
-Here is a selection of policy reports and briefs I have contributed to.
-
 {% assign policies = site.policy | sort: "date" | reverse %}
 <ul>
 {% for item in policies %}

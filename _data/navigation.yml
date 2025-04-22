@@ -10,6 +10,9 @@ main:
 
   - title: "Teaching"
     url: /teaching/    
- 
+    
+   - title: "Policy Writing"
+    url: /policy/
+    
   - title: "CV"
     url: /files/CV_Niklas_Schoch.pdf

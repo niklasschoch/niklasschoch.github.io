@@ -42,9 +42,8 @@
 
 .author__avatar img {
   border-radius: 50%;
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border: 3px solid #f2f2f2; /* soft white ring */
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05); /* subtle drop shadow */
+  max-width: 140px;
+  height: auto;
+  border: 3px solid #f2f2f2;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
 }

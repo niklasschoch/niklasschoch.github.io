@@ -5,7 +5,7 @@ category: Working Paper
 venue: ZEW Discussion Paper No. 21-01
 citation: "(Submitted)"
 authors:
-  - with Gavard, C.
+  - Claire Gavard
 links:
   - label: "Working Paper"
     url: "https://www.zew.de/en/publications/climate-finance-and-emission-reductions-what-do-the-last-twenty-years-tell-us"

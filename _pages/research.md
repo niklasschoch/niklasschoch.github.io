@@ -15,7 +15,13 @@ author_profile: true
 {% for item in items %}
 <div style="margin-bottom: 2rem;">
   <p><strong>{{ item.title }}</strong></p>
-  <p>{{ item.citation }}</p>
+  
+  {% if category == "Work in Progress" and item.authors %}
+    <p>({{ item.authors | join: ", " }})</p>
+  {% else %}
+    <p>{{ item.citation }}</p>
+  {% endif %}
+
   {% if item.venue %}
     <p><em>{{ item.venue }}</em></p>
   {% endif %}

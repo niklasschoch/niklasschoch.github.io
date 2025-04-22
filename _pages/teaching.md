@@ -5,8 +5,6 @@ layout: single
 author_profile: true
 ---
 
-Here is a selection of teaching and academic activities:
-
 {% assign classes = site.teaching | sort: "date" | reverse %}
 <ul>
   {% for item in classes %}

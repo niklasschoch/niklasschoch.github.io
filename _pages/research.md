@@ -17,11 +17,14 @@ Welcome to my research page.
 {% assign items = pubs | where: "category", category %}
 {% for item in items %}
 <div style="margin-bottom: 2rem;">
-<p><strong>{{ item.title }}</strong>{% if item.date and category != "Work in Progress" %} ({{ item.date | date: "%Y" }}){% endif %}</p>
+<p>
+  <strong>{{ item.title }}</strong>
+  {% if item.authors %} {{ item.authors }}{% endif %}
+  {% if item.date and category != "Work in Progress" %} ({{ item.date | date: "%Y" }}){% endif %}
+</p>
+
 {% if item.citation %}
   <p>{{ item.citation }}</p>
-{% elsif item.authors %}
-  <p>{{ item.authors }}</p>
 {% endif %}
 
   {% if item.venue %}

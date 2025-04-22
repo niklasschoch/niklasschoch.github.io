@@ -18,7 +18,7 @@ Welcome to my research page.
 <div style="margin-bottom: 2rem;">
   <p>
     <strong>{{ item.title }}</strong>{% if item.venue %}, <em>{{ item.venue }}</em>{% endif %}
-    {% if item.citation %}, {{ item.citation }}{% endif %}
+    {% if item.citation %} ({{ item.citation }}) {% endif %}
     {% if category != "Work in Progress" and item.authors %}
       , with 
       {% assign author_count = item.authors | size %}

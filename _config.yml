@@ -173,13 +173,9 @@ collections:
   publications:
     output: true
     permalink: /:collection/:path/
-  portfolio:
+  policy:
     output: true
-    permalink: /:collection/:path/
-  talks:
-    output: true
-    permalink: /:collection/:path/
-
+    permalink: /policy/:name/
 
 # These settings control how pages and collections are included in the site
 defaults:

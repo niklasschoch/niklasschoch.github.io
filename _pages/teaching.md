@@ -11,7 +11,7 @@ Here is a selection of teaching and academic activities:
 <ul>
   {% for item in classes %}
     <li>
-      <strong>{{ item.title }}</strong>, <em>{{ item.level }}</em> ({{ item.semester }})
+      <strong>{{ item.title }}</strong>, <em>{{ item.venue }}</em>, {{ item.level }} ({{ item.semester }})
     </li>
   {% endfor %}
 </ul>

@@ -43,10 +43,10 @@
 .author__avatar img {
   border-radius: 50%;
   max-width: 140px;
-  height: auto;
-  border: 2px solid #eee;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   display: block;
+  border: 3px solid #f2f2f2;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
 }
-

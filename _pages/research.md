@@ -13,17 +13,13 @@ author_profile: true
 
 {% assign items = pubs | where: "category", category %}
 {% for item in items %}
-<div style="margin-bottom: 2rem;">
-  <p><strong>{{ item.title }}</strong></p>
-  
-  {% if category == "Work in Progress" and item.authors %}
-    <p>({{ item.authors | join: ", " }})</p>
+<div style="margin-bottom: 1.5rem;">
+  {% if category == "Work in Progress" %}
+    <p><strong>{{ item.title }}</strong>{% if item.authors %} ({{ item.authors | join: ", " }}){% endif %}</p>
   {% else %}
-    <p>{{ item.citation }}</p>
-  {% endif %}
-
-  {% if item.venue %}
-    <p><em>{{ item.venue }}</em></p>
+    <p><strong>{{ item.title }}</strong>{% if item.venue %}, <em>{{ item.venue }}</em>{% endif %}</p>
+    {% if item.citation %}<p>{{ item.citation }}</p>{% endif %}
+    {% if item.authors %}<p>({{ item.authors | join: ", " }})</p>{% endif %}
   {% endif %}
 
   {% if item.links %}

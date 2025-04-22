@@ -15,12 +15,14 @@ Welcome to my research page.
 ## {{ category }}
 
 {% assign items = pubs | where: "category", category %}
+{% assign items = pubs | where: "category", category %}
 {% for item in items %}
 - **{{ item.title }}** ({{ item.date | date: "%Y" }})  
   {{ item.citation }}  
+
   {% if item.links %}
     {% for link in item.links %}
-      [{{ link.label }}]({{ link.url }}){% if forloop.last == false %} | {% endif %}
+      <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener">{{ link.label }}</a>
     {% endfor %}
   {% endif %}
 {% endfor %}

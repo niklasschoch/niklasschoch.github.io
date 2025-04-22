@@ -20,6 +20,10 @@ Welcome to my research page.
   <p><strong>{{ item.title }}</strong> ({{ item.date | date: "%Y" }})<br>
   {{ item.citation }}</p>
 
+  {% if item.venue %}
+    <p><em>{{ item.venue }}</em></p>
+  {% endif %}
+
   {% if item.links %}
     {% for link in item.links %}
       <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener" style="margin-right: 0.5rem;">{{ link.label }}</a>
@@ -27,6 +31,4 @@ Welcome to my research page.
   {% endif %}
 </div>
 {% endfor %}
-
-
 {% endfor %}

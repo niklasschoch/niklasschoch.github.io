@@ -16,13 +16,13 @@ Welcome to my research page.
 
 {% assign items = pubs | where: "category", category %}
 {% for item in items %}
-- **{{ item.title }}**  
+- **{{ item.title }}** ({{ item.date | date: "%Y" }})  
   {{ item.citation }}  
-{% if item.links %}
-  {% for link in item.links %}
-    [{{ link.label }}]({{ link.url }}){% if forloop.last == false %} | {% endif %}
-  {% endfor %}
-{% endif %}
+  {% if item.links %}
+    {% for link in item.links %}
+      [{{ link.label }}]({{ link.url }}){% if forloop.last == false %} | {% endif %}
+    {% endfor %}
+  {% endif %}
 {% endfor %}
 
 {% endfor %}

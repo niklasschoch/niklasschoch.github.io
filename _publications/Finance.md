@@ -2,12 +2,11 @@
 title: "Climate Finance and Emission Reductions: What Do the Last Twenty Years Tell Us?"
 collection: publications
 category: manuscripts
-permalink: /publication/Finance
-excerpt: 'Climate Finance'
+permalink: /publication/climate-finance
+excerpt: "Examines the impact of climate finance on emission reductions over the past two decades."
 date: 2022-01-03
-venue: 'Discussion Paper'
-citation: 'Your Name, You. (2010). &quot;Paper Title Number 2.&quot; <i>Journal 1</i>. 1(2).'
-
+venue: "ZEW Discussion Paper"
+citation: "Schoch, N. (2022). *Climate Finance and Emission Reductions: What Do the Last Twenty Years Tell Us?* ZEW Discussion Paper."
 ---
 
-ZEW Disucssion Paper: [here](https://niklasschoch.github.io/files/CV_Niklas_Schoch.pdf)
+[PDF](https://www.zew.de/publikationen/climate-finance-and-emission-reductions-what-do-the-last-twenty-years-tell-us#:~:text=We%20test%20the%20derived%20hypothesis,five%20years%20following%20the%20transfers.)

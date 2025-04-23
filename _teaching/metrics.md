@@ -4,6 +4,6 @@ collection: teaching
 role: "Lecturer"
 level: "Undergraduate"
 venue: "Sciences Po"
-semester: "Spring 2023"
+semester: "Spring 2023 (two classes)"
 date: 2023-01-01
 ---

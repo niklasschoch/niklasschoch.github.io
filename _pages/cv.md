@@ -7,6 +7,6 @@ author_profile: true
 
 You can view or download my CV below.
 
-<iframe src="files/CV_Niklas_Schoch.pdf" width="100%" height="800px" style="border: none;">
-  This browser does not support PDFs. Please download the PDF to view it: <a href="files/CV_Niklas_Schoch.pdf">Download CV</a>.
+<iframe src="/files/CV_Niklas_Schoch.pdf" width="100%" height="800px" style="border: none;">
+  This browser does not support PDFs. Please download the PDF to view it: <a href="/files/CV_Niklas_Schoch.pdf">Download CV</a>.
 </iframe>

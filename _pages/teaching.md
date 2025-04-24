@@ -9,7 +9,7 @@ author_profile: true
 <ul>
   {% for item in classes %}
     <li>
-      <strong>{{ item.title }}</strong>, <em>{{ item.venue }}</em>, {{ item.level }} ({{ item.semester }})
+      <strong>{{ item.title }}</strong>, <em>{{ item.venue }}</em>, {{ item.level }} ({{ item.role }}, {{ item.semester }})
     </li>
   {% endfor %}
 </ul>

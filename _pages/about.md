@@ -7,7 +7,7 @@ redirect_from:
   - /about.html
 ---
 
-I’m a PhD candidate in economics at Sciences Po Paris, where I’m fortunate to be advised by Johannes Boehm and Stefan Pollinger. For the Spring term 2025, I visited Columbia University. My research lies at the intersection of environmental economics and industrial organization.
+I’m a PhD candidate in economics at Sciences Po Paris, where I’m fortunate to be advised by Johannes Boehm and Stefan Pollinger. My research lies at the intersection of environmental economics and industrial organization.
 
 Specifically, I use structural methods to study the implications of carbon pricing on green technology adoption in concentrated industries. I also work on the market design of emissions trading systems. Earlier work includes evaluations of the local economic impacts of wind power deployment and the emission-reducing effects of international climate finance.
 

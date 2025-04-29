@@ -4,7 +4,7 @@ date: 2025-12-31
 collection: publications
 category: Publications
 venue: "Environmental and Resource Economics"
-citation: "(2025)"
+citation: "2025"
 authors:
   - Claire Gavard
   - Jonas Göbel

@@ -27,12 +27,12 @@ author_profile: true
         {% for author in item.authors %}
           {% assign i = forloop.index0 %}
           {% assign last = author_count | minus: 1 %}
-          {% if i < last - 1 %}
-            {{ author }},
-          {% elsif i == last - 1 %}
-            {{ author }} and
+          {% if i == 0 %}
+            {{ author }}
+          {% elsif i == last %}
+            and {{ author }}
           {% else %}
-            {{ author -}}
+            , {{ author }}
           {% endif %}
         {% endfor %}
       {% endif -%}.
@@ -52,12 +52,12 @@ author_profile: true
           {% for author in item.authors %}
             {% assign i = forloop.index0 %}
             {% assign last = author_count | minus: 1 %}
-            {% if i < last - 1 %}
-              {{ author }},
-            {% elsif i == last - 1 %}
-              {{ author }} and
+            {% if i == 0 %}
+              {{ author }}
+            {% elsif i == last %}
+              and {{ author }}
             {% else %}
-              {{ author -}}
+              , {{ author }}
             {% endif %}
           {% endfor %}
         {% endif -%}.

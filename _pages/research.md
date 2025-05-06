@@ -27,11 +27,11 @@ author_profile: true
           {% assign i = forloop.index0 %}
           {% assign last = author_count | minus: 1 %}
           {% if i == 0 %}
-            {{ author }}
+            {{ author -}}
           {% elsif i == last %}
             and {{ author }}
           {% else %}
-            , {{ author }}
+            , {{ author -}}
           {% endif %}
         {% endfor %}
       {% endif -%}.
@@ -54,9 +54,9 @@ author_profile: true
               {% if i == 0 %}
                 {{- author -}}
               {% elsif i == last %}
-                and {{- author -}}
+                and {{ author -}}
               {% else %}
-                , {{- author -}}
+                , {{ author -}}
               {% endif %}
             {% endfor %}
           {% endif -%}.

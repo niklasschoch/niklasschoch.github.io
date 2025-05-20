@@ -19,19 +19,22 @@ author_profile: true
     {% if category == "Work in Progress" and item.authors %}, with 
       {% assign author_count = item.authors | size %}
       {% if author_count == 1 %}
-        {{- item.authors[0] -}}
+        {{ item.authors[0] }}
       {% elsif author_count == 2 %}
-        {{- item.authors[0] -}} and {{- item.authors[1] -}}
+        {{ item.authors[0] }} and {{ item.authors[1] }}
       {% else %}
         {% for author in item.authors %}
           {% assign i = forloop.index0 %}
           {% assign last = author_count | minus: 1 %}
-          {% if i == 0 -%}{{- author -}}
-          {% elsif i == last -%} and {{- author -}}
-          {% else -%}, {{- author -}}
+          {% if i == 0 %}
+            {{ author }}
+          {% elsif i == last %}
+            and {{ author }}
+          {% else %}
+            , {{ author }}
           {% endif %}
         {% endfor %}
-      {% endif -%}.
+      {% endif %}.
     {% endif %}
 
     {% if category != "Work in Progress" %}
@@ -40,20 +43,23 @@ author_profile: true
       {% if item.authors %}, with 
         {% assign author_count = item.authors | size %}
         {% if author_count == 1 %}
-          {{- item.authors[0] -}}
+          {{ item.authors[0] }}
         {% elsif author_count == 2 %}
-          {{- item.authors[0] -}} and {{- item.authors[1] -}}
+          {{ item.authors[0] }} and {{ item.authors[1] }}
         {% else %}
           {% for author in item.authors %}
             {% assign i = forloop.index0 %}
             {% assign last = author_count | minus: 1 %}
-            {% if i == 0 -%}{{- author -}}
-            {% elsif i == last -%} and {{- author -}}
-            {% else -%}, {{- author -}}
+            {% if i == 0 %}
+              {{ author }}
+            {% elsif i == last %}
+              and {{ author }}
+            {% else %}
+              , {{ author }}
             {% endif %}
           {% endfor %}
-        {% endif -%}.
-      {% else -%}.
+        {% endif %}.
+      {% else %}.
       {% endif %}
     {% endif %}
   </p>

@@ -15,53 +15,13 @@ author_profile: true
 {% for item in items %}
 <div style="margin-bottom: 2rem;">
   <p>
-    <strong>{{ item.title-}}</strong>
-    {% if category == "Work in Progress" and item.authors %}, with 
-      {% assign author_count = item.authors | size %}
-      {% if author_count == 1 %}
-        {{ item.authors[0]-}}
-      {% elsif author_count == 2 %}
-        {{ item.authors[0] }} and {{ item.authors[1]-}}
-      {% else %}
-        {% for author in item.authors %}
-          {% assign i = forloop.index0 %}
-          {% assign last = author_count | minus: 1 %}
-          {% if i == 0 %}
-            {{ author-}}
-          {% elsif i == last %}
-            , and {{ author-}}
-          {% else %}
-            , {{ author-}}
-          {% endif %}
-        {% endfor %}
-      {% endif %}.
-    {% endif %}
+    <strong>{{ item.title }}</strong>
+    {% if item.authors %}, with {{ item.authors }}{% endif %}
 
     {% if category != "Work in Progress" %}
       {% if item.venue %}, <em>{{ item.venue }}</em>{% endif %}
       {% if item.citation %} ({{ item.citation }}){% endif %}
-      {% if item.authors %}, with 
-        {% assign author_count = item.authors | size %}
-        {% if author_count == 1 %}
-          {{ item.authors[0]-}}
-        {% elsif author_count == 2 %}
-          {{ item.authors[0] }} and {{ item.authors[1]-}}
-        {% else %}
-          {% for author in item.authors %}
-            {% assign i = forloop.index0 %}
-            {% assign last = author_count | minus: 1 %}
-            {% if i == 0 %}
-              {{ author-}}
-            {% elsif i == last %}
-              , and {{ author-}}
-            {% else %}
-              , {{ author-}}
-            {% endif %}
-          {% endfor %}
-        {% endif %}.
-      {% else %}.
-      {% endif %}
-    {% endif %}
+    {% endif %}.
   </p>
 
   {% if item.links %}

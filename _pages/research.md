@@ -15,7 +15,7 @@ author_profile: true
 {% for item in items %}
 <div style="margin-bottom: 2rem;">
   <p>
-    <strong>{{ item.title }}</strong>
+    <strong>{{ item.title-}}</strong>
     {% if category == "Work in Progress" and item.authors %}, with 
       {% assign author_count = item.authors | size %}
       {% if author_count == 1 %}
@@ -51,7 +51,7 @@ author_profile: true
             {% assign i = forloop.index0 %}
             {% assign last = author_count | minus: 1 %}
             {% if i == 0 %}
-              {{ author }}
+              {{ author-}}
             {% elsif i == last %}
               , and {{ author-}}
             {% else %}

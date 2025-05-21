@@ -12,23 +12,20 @@ author_profile: true
 ## {{ category }}
 
 {% assign items = pubs | where: "category", category %}
+<ul>
 {% for item in items %}
-<div style="margin-bottom: 2rem;">
-  <p>
-    <strong>{{ item.title }}</strong>
-    {% if item.authors %}, with {{ item.authors }}{% endif %}
-
-    {% if category != "Work in Progress" %}
-      {% if item.venue %}, <em>{{ item.venue }}</em>{% endif %}
-      {% if item.citation %} ({{ item.citation }}){% endif %}
-    {% endif %}.
-  </p>
-
-  {% if item.links %}
-    {% for link in item.links %}
-      <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener" style="margin-right: 0.5rem;">{{ link.label }}</a>
-    {% endfor %}
-  {% endif %}
-</div>
+  <li>
+    "{{ item.title }}"{% if item.authors %}, {{ item.authors }}{% endif %}
+    {% if item.venue %}, <em>{{ item.venue }}</em>{% endif %}
+    {% if item.citation %} ({{ item.citation }}){% endif %}.
+    
+    {% if item.links %}
+      <br/>
+      {% for link in item.links %}
+        <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener" style="margin-right: 0.5rem;">{{ link.label }}</a>
+      {% endfor %}
+    {% endif %}
+  </li>
 {% endfor %}
+</ul>
 {% endfor %}

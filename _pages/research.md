@@ -15,16 +15,16 @@ author_profile: true
 <ul>
 {% for item in items %}
   <li>
-    "{{ item.title }}"{% if item.authors %}, {{ item.authors }}{% endif %}
-    {% if item.venue %}, <em>{{ item.venue }}</em>{% endif %}
-    {% if item.citation %} ({{ item.citation }}){% endif %}.
+    "{{ item.title }}"{% if item.authors %}, {{ item.authors }}{% endif -%}
+    {% if item.venue %}, <em>{{ item.venue }}</em>{% endif -%}
+    {% if item.citation %} ({{ item.citation }}){% endif -%}.
     
     {% if item.links %}
       <br/>
       {% for link in item.links %}
         <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener" style="margin-right: 0.5rem;">{{ link.label }}</a>
       {% endfor %}
-    {% endif %}
+    {% endif -%}
   </li>
 {% endfor %}
 </ul>

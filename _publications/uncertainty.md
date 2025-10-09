@@ -3,5 +3,5 @@ title: "Escaping the Uncertainty: Prices vs. Quantities with Long-Term Investmen
 date: 2099-01-01
 collection: publications
 category: Work in Progress
-citation: "JMP"
+authors: "with Diego Cussen"
 ---

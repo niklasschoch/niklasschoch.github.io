@@ -3,6 +3,6 @@ title: "Carbon pricing and its implications in input-output networks: the case o
 date: 2023-01-01
 collection: policy
 venue: "Conseil d’analyse économique, Focus No. 96"
-authors: "with Isabelle Mejean"
+authors: "with Isabelle Méjean"
 ---
 

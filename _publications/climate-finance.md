@@ -3,7 +3,7 @@ title: "Climate Finance and Emission Reductions: What Do the Last Twenty Years T
 collection: publications
 category: Working Paper
 venue: ZEW Discussion Paper No. 21-01
-citation: "Revise and Resubmit at Environmental and Development Economics"
+citation: "R&R at Environmental and Development Economics"
 authors: "with Claire Gavard"
 links:
   - label: "Working Paper"

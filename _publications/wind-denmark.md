@@ -3,8 +3,7 @@ title: "Local Economic Impacts of Wind Power Deployment in Denmark"
 date: 2025-12-31
 collection: publications
 category: Publications
-venue: "Environmental and Resource Economics"
-citation: "2025"
+citation: "Environmental and Resource Economics (2025)"
 authors: "with Claire Gavard and Jonas Göbel"
 links:
   - label: "Published Version"

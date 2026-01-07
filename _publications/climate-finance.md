@@ -2,7 +2,6 @@
 title: "Climate Finance and Emission Reductions: What Do the Last Twenty Years Tell Us?"
 collection: publications
 category: Working Paper
-venue: ZEW Discussion Paper No. 21-01
 citation: "Revised and resubmitted at Environment and Development Economics"
 authors: "with Claire Gavard"
 links:

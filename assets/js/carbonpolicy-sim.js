@@ -4,7 +4,30 @@
 // Data: /assets/data/dashboard_paths.csv
 
 (async function () {
+  // Wait for DOM to be ready (with defer attribute, this should already be ready, but double-check)
+  if (document.readyState === 'loading') {
+    await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+  }
+
+  // Wait for PapaParse and Plotly to be available (they load before this script due to defer)
+  let waitCount = 0;
+  while ((typeof Papa === 'undefined' || typeof Plotly === 'undefined') && waitCount < 100) {
+    await new Promise(resolve => setTimeout(resolve, 50));
+    waitCount++;
+  }
+
+  if (typeof Papa === 'undefined') {
+    console.error("Carbon Policy Simulator: PapaParse library not loaded");
+    return;
+  }
+
+  if (typeof Plotly === 'undefined') {
+    console.error("Carbon Policy Simulator: Plotly library not loaded");
+    return;
+  }
+
   const CSV_URL = "/assets/data/dashboard_paths.csv";
+  console.log("Carbon Policy Simulator: Starting initialization...");
 
   const elMarket = document.getElementById("ctrl-market");
   const elInstrument = document.getElementById("ctrl-instrument");
@@ -14,6 +37,21 @@
   const elOutcome = document.getElementById("ctrl-outcome");
 
   const PLOT_ID = "plot-main";
+
+  // Check if required elements exist
+  if (!elMarket || !elInstrument || !elCbam || !elLevel || !elLevelLabel || !elOutcome) {
+    console.error("Carbon Policy Simulator: Required DOM elements not found", {
+      elMarket: !!elMarket,
+      elInstrument: !!elInstrument,
+      elCbam: !!elCbam,
+      elLevel: !!elLevel,
+      elLevelLabel: !!elLevelLabel,
+      elOutcome: !!elOutcome
+    });
+    return;
+  }
+
+  console.log("Carbon Policy Simulator: DOM elements found, loading CSV...");
 
   let rows = [];
   let levelGrid = []; // discrete levels for current (market,instrument,cbam)
@@ -171,41 +209,63 @@
   }
 
   // ---- Load CSV ----
-  const text = await (await fetch(CSV_URL, { cache: "no-store" })).text();
-  const parsed = Papa.parse(text, { header: true, dynamicTyping: true, skipEmptyLines: true });
+  try {
+    const response = await fetch(CSV_URL, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+    }
+    const text = await response.text();
+    if (!text || text.trim().length === 0) {
+      throw new Error("CSV file is empty");
+    }
+    const parsed = Papa.parse(text, { header: true, dynamicTyping: true, skipEmptyLines: true });
+    
+    if (parsed.errors && parsed.errors.length > 0) {
+      console.warn("CSV parsing errors:", parsed.errors);
+    }
 
-  rows = (parsed.data || []).map(r => ({
-    market: String(r.market),
-    instrument: String(r.instrument),
-    cbam: parseNum(r.cbam),
-    level: parseNum(r.level),
-    time: parseNum(r.time),
+    rows = (parsed.data || []).map(r => ({
+      market: String(r.market),
+      instrument: String(r.instrument),
+      cbam: parseNum(r.cbam),
+      level: parseNum(r.level),
+      time: parseNum(r.time),
 
-    // metrics (include all you might plot)
-    price: parseNum(r.price),
-    marketQuantity: parseNum(r.marketQuantity),
-    imports: parseNum(r.imports),
-    leakage: parseNum(r.leakage),
-    consumerSurplus: parseNum(r.consumerSurplus),
-    carbonRevenue: parseNum(r.carbonRevenue),
-    damage: parseNum(r.damage),
-    importProfit: parseNum(r.importProfit),
+      // metrics (include all you might plot)
+      price: parseNum(r.price),
+      marketQuantity: parseNum(r.marketQuantity),
+      imports: parseNum(r.imports),
+      leakage: parseNum(r.leakage),
+      consumerSurplus: parseNum(r.consumerSurplus),
+      carbonRevenue: parseNum(r.carbonRevenue),
+      damage: parseNum(r.damage),
+      importProfit: parseNum(r.importProfit),
 
-    profit_total: parseNum(r.profit_total),
-    emissions_total: parseNum(r.emissions_total),
-    investCost_total: parseNum(r.investCost_total),
-    quantityProduced_total: parseNum(r.quantityProduced_total),
-  })).filter(r =>
-    r.market && r.instrument &&
-    r.cbam !== null && r.level !== null && r.time !== null
-  );
+      profit_total: parseNum(r.profit_total),
+      emissions_total: parseNum(r.emissions_total),
+      investCost_total: parseNum(r.investCost_total),
+      quantityProduced_total: parseNum(r.quantityProduced_total),
+    })).filter(r =>
+      r.market && r.instrument &&
+      r.cbam !== null && r.level !== null && r.time !== null
+    );
 
-  if (rows.length === 0) {
-    Plotly.purge(PLOT_ID);
-    return;
+    if (rows.length === 0) {
+      console.error("Carbon Policy Simulator: No valid rows found in CSV data");
+      Plotly.purge(PLOT_ID);
+      return;
+    }
+
+    console.log(`Carbon Policy Simulator: Loaded ${rows.length} rows, populating controls...`);
+    populateControls();
+    attachHandlers();
+    draw();
+    console.log("Carbon Policy Simulator: Initialization complete");
+  } catch (error) {
+    console.error("Carbon Policy Simulator error:", error);
+    const plotEl = document.getElementById(PLOT_ID);
+    if (plotEl) {
+      plotEl.innerHTML = `<p style="color: red; padding: 20px;">Error loading simulator: ${error.message}</p>`;
+    }
   }
-
-  populateControls();
-  attachHandlers();
-  draw();
 })();

@@ -1,4 +1,30 @@
 (async function () {
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+  }
+
+  // Wait for PapaParse and Plotly libraries to load
+  let waitCount = 0;
+  while ((typeof Papa === 'undefined' || typeof Plotly === 'undefined') && waitCount < 100) {
+    await new Promise(resolve => setTimeout(resolve, 50));
+    waitCount++;
+  }
+
+  if (typeof Papa === 'undefined') {
+    console.error("Carbon Policy Simulator: PapaParse library not loaded");
+    const plotEl = document.getElementById("plot-main");
+    if (plotEl) plotEl.innerHTML = '<p style="color: red;">Error: PapaParse library failed to load</p>';
+    return;
+  }
+
+  if (typeof Plotly === 'undefined') {
+    console.error("Carbon Policy Simulator: Plotly library not loaded");
+    const plotEl = document.getElementById("plot-main");
+    if (plotEl) plotEl.innerHTML = '<p style="color: red;">Error: Plotly library failed to load</p>';
+    return;
+  }
+
   const CSV_URL = "/assets/data/dashboard_paths.csv";
 
   const elMarket = document.getElementById("ctrl-market");
@@ -7,6 +33,21 @@
   const elLevel = document.getElementById("ctrl-level");
   const elLevelLabel = document.getElementById("ctrl-level-label");
   const elOutcome = document.getElementById("ctrl-outcome");
+
+  // Check if all required DOM elements exist
+  if (!elMarket || !elInstrument || !elCbam || !elLevel || !elLevelLabel || !elOutcome) {
+    console.error("Carbon Policy Simulator: Required DOM elements not found", {
+      elMarket: !!elMarket,
+      elInstrument: !!elInstrument,
+      elCbam: !!elCbam,
+      elLevel: !!elLevel,
+      elLevelLabel: !!elLevelLabel,
+      elOutcome: !!elOutcome
+    });
+    const plotEl = document.getElementById("plot-main");
+    if (plotEl) plotEl.innerHTML = '<p style="color: red;">Error: Required page elements not found</p>';
+    return;
+  }
 
   let rows = [];
   let levelGrid = []; // discrete levels for current (market,instrument,cbam)
@@ -32,6 +73,10 @@
   }
 
   function filterRows() {
+    if (!elMarket || !elInstrument || !elCbam || !elLevel || rows.length === 0) {
+      return [];
+    }
+
     const market = elMarket.value;
     const instrument = elInstrument.value;
     const cbam = Number(elCbam.value);
@@ -75,6 +120,10 @@
   }
 
   function draw() {
+    if (!elOutcome) {
+      return;
+    }
+
     const data = filterRows();
     const outcome = elOutcome.value;
 
@@ -114,8 +163,18 @@
   }
 
   function populateControls() {
+    if (rows.length === 0) {
+      console.error("Carbon Policy Simulator: Cannot populate controls - no data available");
+      return;
+    }
+
     const markets = uniqSorted(rows.map(r => r.market));
     const instruments = uniqSorted(rows.map(r => r.instrument));
+
+    if (markets.length === 0 || instruments.length === 0) {
+      console.error("Carbon Policy Simulator: No markets or instruments found in data");
+      return;
+    }
 
     elMarket.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join("");
     elInstrument.innerHTML = instruments.map(s => `<option value="${s}">${s}</option>`).join("");
@@ -135,15 +194,25 @@
       Object.prototype.hasOwnProperty.call(sample, o.key) && sample[o.key] !== null
     );
     
-    elOutcome.innerHTML = validOutcomes.map(o => 
-      `<option value="${o.key}">${o.label}</option>`
-    ).join("");
+    if (validOutcomes.length === 0) {
+      console.error("Carbon Policy Simulator: No valid outcomes found in data");
+      elOutcome.innerHTML = '<option value="">No data available</option>';
+    } else {
+      elOutcome.innerHTML = validOutcomes.map(o => 
+        `<option value="${o.key}">${o.label}</option>`
+      ).join("");
+    }
 
     // defaults
     if (markets.includes("Total")) elMarket.value = "Total";
+    else if (markets.length > 0) elMarket.value = markets[0];
+    
     if (instruments.includes("Tax")) elInstrument.value = "Tax";
+    else if (instruments.length > 0) elInstrument.value = instruments[0];
+    
     elCbam.value = "0";
     elLevel.value = "0";
+    
     if (validOutcomes.length > 0) {
       elOutcome.value = validOutcomes[0].key;
     }
@@ -157,29 +226,59 @@
     elOutcome.addEventListener("change", draw);
   }
 
-  // Load CSV
-  const text = await (await fetch(CSV_URL, { cache: "no-store" })).text();
-  const parsed = Papa.parse(text, { header: true, dynamicTyping: true, skipEmptyLines: true });
+  // Load CSV with error handling
+  try {
+    const response = await fetch(CSV_URL, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+    }
+    const text = await response.text();
+    if (!text || text.trim().length === 0) {
+      throw new Error("CSV file is empty");
+    }
 
-  rows = parsed.data.map(r => ({
-    market: String(r.market),
-    instrument: String(r.instrument),
-    cbam: parseNum(r.cbam),
-    level: parseNum(r.level),
-    time: parseNum(r.time),
+    const parsed = Papa.parse(text, { header: true, dynamicTyping: true, skipEmptyLines: true });
+    
+    if (parsed.errors && parsed.errors.length > 0) {
+      console.warn("CSV parsing errors:", parsed.errors);
+    }
 
-    price: parseNum(r.price),
+    if (!parsed.data || !Array.isArray(parsed.data)) {
+      throw new Error("CSV parsing returned invalid data format");
+    }
 
-    emissions_total: parseNum(r.emissions_total),
-    profit_total: parseNum(r.profit_total),
-    marketQuantity: parseNum(r.marketQuantity),
-    imports: parseNum(r.imports),
-  })).filter(r =>
-    r.market && r.instrument &&
-    r.cbam !== null && r.level !== null && r.time !== null
-  );
+    rows = parsed.data.map(r => ({
+      market: String(r.market),
+      instrument: String(r.instrument),
+      cbam: parseNum(r.cbam),
+      level: parseNum(r.level),
+      time: parseNum(r.time),
 
-  populateControls();
-  attachHandlers();
-  draw();
+      price: parseNum(r.price),
+
+      emissions_total: parseNum(r.emissions_total),
+      profit_total: parseNum(r.profit_total),
+      marketQuantity: parseNum(r.marketQuantity),
+      imports: parseNum(r.imports),
+    })).filter(r =>
+      r.market && r.instrument &&
+      r.cbam !== null && r.level !== null && r.time !== null
+    );
+
+    if (rows.length === 0) {
+      throw new Error("No valid data rows found in CSV");
+    }
+
+    console.log(`Carbon Policy Simulator: Loaded ${rows.length} rows successfully`);
+
+    populateControls();
+    attachHandlers();
+    draw();
+  } catch (error) {
+    console.error("Carbon Policy Simulator error:", error);
+    const plotEl = document.getElementById("plot-main");
+    if (plotEl) {
+      plotEl.innerHTML = `<p style="color: red; padding: 20px;">Error loading simulator: ${error.message}<br>Check browser console for details.</p>`;
+    }
+  }
 })();

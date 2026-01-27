@@ -6,6 +6,7 @@
   const elCbam = document.getElementById("ctrl-cbam");
   const elLevel = document.getElementById("ctrl-level");
   const elLevelLabel = document.getElementById("ctrl-level-label");
+  const elOutcome = document.getElementById("ctrl-outcome");
 
   let rows = [];
   let levelGrid = []; // discrete levels for current (market,instrument,cbam)
@@ -17,6 +18,17 @@
 
   function uniqSorted(arr) {
     return [...new Set(arr)].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  }
+
+  function outcomeLabel(key) {
+    const labels = {
+      "emissions_total": "Emissions (total)",
+      "profit_total": "Profit (total)",
+      "marketQuantity": "Market quantity",
+      "imports": "Imports",
+      "price": "Price"
+    };
+    return labels[key] || key;
   }
 
   function filterRows() {
@@ -64,47 +76,41 @@
 
   function draw() {
     const data = filterRows();
+    const outcome = elOutcome.value;
 
-    // emissions
-    {
-      const s = series(data, "emissions_total");
-      Plotly.newPlot("plot-emissions", [{
-        x: s.x, y: s.y, type: "scatter", mode: "lines", name: "Emissions"
-      }], {
-        title: "Emissions (total)",
-        xaxis: { title: "Time" },
-        yaxis: { title: "Emissions" },
-        margin: { t: 50, l: 60, r: 20, b: 50 }
-      }, { displayModeBar: false });
+    if (!outcome || data.length === 0) {
+      Plotly.purge("plot-main");
+      return;
     }
 
-    // output vs imports
-    {
-      const q = series(data, "marketQuantity");
-      const m = series(data, "imports");
-      Plotly.newPlot("plot-output", [
-        { x: q.x, y: q.y, type: "scatter", mode: "lines", name: "Market quantity" },
-        { x: m.x, y: m.y, type: "scatter", mode: "lines", name: "Imports" }
-      ], {
-        title: "Output and imports",
-        xaxis: { title: "Time" },
-        yaxis: { title: "Quantity" },
-        margin: { t: 50, l: 60, r: 20, b: 50 }
-      }, { displayModeBar: false });
+    const s = series(data, outcome);
+    
+    if (s.x.length === 0 || s.y.length === 0) {
+      Plotly.purge("plot-main");
+      return;
     }
 
-    // profit
-    {
-      const s = series(data, "profit_total");
-      Plotly.newPlot("plot-profit", [{
-        x: s.x, y: s.y, type: "scatter", mode: "lines", name: "Profit"
-      }], {
-        title: "Profit (total)",
-        xaxis: { title: "Time" },
-        yaxis: { title: "Profit" },
-        margin: { t: 50, l: 60, r: 20, b: 50 }
-      }, { displayModeBar: false });
-    }
+    const label = outcomeLabel(outcome);
+    const maxY = s.y.length > 0 ? Math.max(...s.y) : 0;
+    const minY = s.y.length > 0 ? Math.min(...s.y) : 0;
+    const range = maxY - minY;
+    const padding = range > 0 ? range * 0.1 : 1;
+
+    Plotly.newPlot("plot-main", [{
+      x: s.x,
+      y: s.y,
+      type: "scatter",
+      mode: "lines",
+      name: label
+    }], {
+      title: label,
+      xaxis: { title: "Time" },
+      yaxis: {
+        title: label,
+        range: [minY - padding, maxY + padding]
+      },
+      margin: { t: 50, l: 60, r: 20, b: 50 }
+    }, { displayModeBar: false, responsive: true });
   }
 
   function populateControls() {
@@ -114,11 +120,33 @@
     elMarket.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join("");
     elInstrument.innerHTML = instruments.map(s => `<option value="${s}">${s}</option>`).join("");
 
+    // Populate outcome dropdown with available metrics
+    const availableOutcomes = [
+      { key: "emissions_total", label: "Emissions (total)" },
+      { key: "profit_total", label: "Profit (total)" },
+      { key: "marketQuantity", label: "Market quantity" },
+      { key: "imports", label: "Imports" },
+      { key: "price", label: "Price" }
+    ];
+    
+    // Check which outcomes are actually available in the data
+    const sample = rows[0] || {};
+    const validOutcomes = availableOutcomes.filter(o => 
+      Object.prototype.hasOwnProperty.call(sample, o.key) && sample[o.key] !== null
+    );
+    
+    elOutcome.innerHTML = validOutcomes.map(o => 
+      `<option value="${o.key}">${o.label}</option>`
+    ).join("");
+
     // defaults
     if (markets.includes("Total")) elMarket.value = "Total";
     if (instruments.includes("Tax")) elInstrument.value = "Tax";
     elCbam.value = "0";
     elLevel.value = "0";
+    if (validOutcomes.length > 0) {
+      elOutcome.value = validOutcomes[0].key;
+    }
   }
 
   function attachHandlers() {
@@ -126,6 +154,7 @@
     elInstrument.addEventListener("change", draw);
     elCbam.addEventListener("change", draw);
     elLevel.addEventListener("input", draw);
+    elOutcome.addEventListener("change", draw);
   }
 
   // Load CSV

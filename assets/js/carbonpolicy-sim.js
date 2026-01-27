@@ -6,10 +6,26 @@
   const elCbam = document.getElementById("ctrl-cbam");
   const elLevel = document.getElementById("ctrl-level");
   const elLevelLabel = document.getElementById("ctrl-level-label");
+  const elOutcome = document.getElementById("ctrl-outcome");
 
   let rows = [];
   let levelGrid = []; // discrete levels for current (market,instrument,cbam)
 
+  const OUTCOMES = [
+    { key: "price", label: "Price" },
+    { key: "emissions_total", label: "Emissions (total)" },
+    { key: "profit_total", label: "Profit (total)" },
+    { key: "marketQuantity", label: "Market quantity" },
+    { key: "imports", label: "Imports" },
+    { key: "leakage", label: "Leakage" },
+    { key: "consumerSurplus", label: "Consumer surplus" },
+    { key: "carbonRevenue", label: "Carbon revenue" },
+    { key: "damage", label: "Damage" },
+    { key: "importProfit", label: "Import profit" },
+    { key: "investCost_total", label: "Investment cost (total)" },
+    { key: "quantityProduced_total", label: "Domestic output (total)" },
+  ];
+  
   function parseNum(x) {
     const v = Number(x);
     return Number.isFinite(v) ? v : null;

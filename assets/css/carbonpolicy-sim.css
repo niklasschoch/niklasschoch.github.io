@@ -1,1 +1,29 @@
 
+.sim-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 12px 0 18px 0;
+  align-items: center;
+}
+
+.sim-controls label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sim-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+@media (min-width: 900px) {
+  .sim-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  #plot-profit {
+    grid-column: 1 / span 2;
+  }
+}

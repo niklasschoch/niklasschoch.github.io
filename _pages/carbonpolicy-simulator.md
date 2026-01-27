@@ -40,6 +40,8 @@ On this page, you can explore the main results of my JMP. The values show the de
 
 <div id="plot-main"></div>
 
+<div id="plot-description" class="plot-description"></div>
+
 <link rel="stylesheet" href="/assets/css/carbonpolicy-sim.css">
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>

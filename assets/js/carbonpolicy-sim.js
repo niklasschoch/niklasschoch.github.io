@@ -117,9 +117,6 @@
 
     const s = series(data, f.outcome);
 
-    Plotly.newPlot(PLOT_ID, [{
-    const s = series(data, f.outcome);
-
     const maxY = s.y.length ? Math.max(...s.y) : 0;
     const upper = 1.25 * maxY;
 

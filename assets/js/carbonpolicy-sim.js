@@ -1,3 +1,8 @@
+// assets/js/carbonpolicy-sim.js
+// One-outcome-at-a-time CarbonPolicy Simulator
+// Controls: market, instrument (Tax/Subsidy), cbam (0/1), level (discrete slider), outcome (dropdown)
+// Data: /assets/data/dashboard_paths.csv
+
 (async function () {
   const CSV_URL = "/assets/data/dashboard_paths.csv";
 
@@ -8,24 +13,29 @@
   const elLevelLabel = document.getElementById("ctrl-level-label");
   const elOutcome = document.getElementById("ctrl-outcome");
 
+  const PLOT_ID = "plot-main";
+
   let rows = [];
   let levelGrid = []; // discrete levels for current (market,instrument,cbam)
 
+  // Define selectable outcomes (filtered to those present in CSV at runtime)
   const OUTCOMES = [
     { key: "price", label: "Price" },
-    { key: "emissions_total", label: "Emissions (total)" },
-    { key: "profit_total", label: "Profit (total)" },
     { key: "marketQuantity", label: "Market quantity" },
     { key: "imports", label: "Imports" },
     { key: "leakage", label: "Leakage" },
+
+    { key: "quantityProduced_total", label: "Domestic output (total)" },
+    { key: "profit_total", label: "Profit (total)" },
+    { key: "investCost_total", label: "Investment cost (total)" },
+    { key: "emissions_total", label: "Emissions (total)" },
+
     { key: "consumerSurplus", label: "Consumer surplus" },
     { key: "carbonRevenue", label: "Carbon revenue" },
     { key: "damage", label: "Damage" },
     { key: "importProfit", label: "Import profit" },
-    { key: "investCost_total", label: "Investment cost (total)" },
-    { key: "quantityProduced_total", label: "Domestic output (total)" },
   ];
-  
+
   function parseNum(x) {
     const v = Number(x);
     return Number.isFinite(v) ? v : null;
@@ -35,12 +45,12 @@
     return [...new Set(arr)].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   }
 
-  function filterRows() {
-    const market = elMarket.value;
-    const instrument = elInstrument.value;
-    const cbam = Number(elCbam.value);
+  function outcomeLabel(key) {
+    const o = OUTCOMES.find(x => x.key === key);
+    return o ? o.label : key;
+  }
 
-    // update discrete level grid for this selection
+  function updateLevelGrid(market, instrument, cbam) {
     const candidates = rows.filter(r =>
       r.market === market &&
       r.instrument === instrument &&
@@ -49,24 +59,37 @@
 
     levelGrid = uniqSorted(candidates.map(r => r.level));
 
-    // slider indexes levels
     elLevel.min = 0;
     elLevel.max = Math.max(0, levelGrid.length - 1);
     elLevel.step = 1;
 
-    // clamp current slider value
-    const idx = Math.min(Number(elLevel.value || 0), levelGrid.length - 1);
-    elLevel.value = Math.max(0, idx);
+    const idxCurrent = Number(elLevel.value || 0);
+    const idxClamped = Math.min(Math.max(0, idxCurrent), Math.max(0, levelGrid.length - 1));
+    elLevel.value = String(idxClamped);
 
-    const level = levelGrid.length ? levelGrid[Number(elLevel.value)] : null;
+    const level = levelGrid.length ? levelGrid[idxClamped] : null;
     elLevelLabel.textContent = (level === null) ? "" : String(level);
 
-    // final filtered set including level
+    return { candidates, level };
+  }
+
+  function currentFilters() {
+    return {
+      market: elMarket.value,
+      instrument: elInstrument.value,
+      cbam: Number(elCbam.value),
+      outcome: elOutcome.value
+    };
+  }
+
+  function filteredRows() {
+    const f = currentFilters();
+    const { candidates, level } = updateLevelGrid(f.market, f.instrument, f.cbam);
+    if (level === null) return [];
     return candidates.filter(r => r.level === level);
   }
 
   function series(data, yKey) {
-    // sort by time; keep nulls out
     const s = data
       .map(r => ({ t: r.time, y: r[yKey] }))
       .filter(p => p.t !== null && p.y !== null)
@@ -79,48 +102,33 @@
   }
 
   function draw() {
-    const data = filterRows();
+    const data = filteredRows();
+    const f = currentFilters();
 
-    // emissions
-    {
-      const s = series(data, "emissions_total");
-      Plotly.newPlot("plot-emissions", [{
-        x: s.x, y: s.y, type: "scatter", mode: "lines", name: "Emissions"
-      }], {
-        title: "Emissions (total)",
-        xaxis: { title: "Time" },
-        yaxis: { title: "Emissions" },
-        margin: { t: 50, l: 60, r: 20, b: 50 }
-      }, { displayModeBar: false });
+    if (!f.outcome) {
+      Plotly.purge(PLOT_ID);
+      return;
     }
 
-    // output vs imports
-    {
-      const q = series(data, "marketQuantity");
-      const m = series(data, "imports");
-      Plotly.newPlot("plot-output", [
-        { x: q.x, y: q.y, type: "scatter", mode: "lines", name: "Market quantity" },
-        { x: m.x, y: m.y, type: "scatter", mode: "lines", name: "Imports" }
-      ], {
-        title: "Output and imports",
-        xaxis: { title: "Time" },
-        yaxis: { title: "Quantity" },
-        margin: { t: 50, l: 60, r: 20, b: 50 }
-      }, { displayModeBar: false });
+    if (data.length === 0) {
+      Plotly.purge(PLOT_ID);
+      return;
     }
 
-    // profit
-    {
-      const s = series(data, "profit_total");
-      Plotly.newPlot("plot-profit", [{
-        x: s.x, y: s.y, type: "scatter", mode: "lines", name: "Profit"
-      }], {
-        title: "Profit (total)",
-        xaxis: { title: "Time" },
-        yaxis: { title: "Profit" },
-        margin: { t: 50, l: 60, r: 20, b: 50 }
-      }, { displayModeBar: false });
-    }
+    const s = series(data, f.outcome);
+
+    Plotly.newPlot(PLOT_ID, [{
+      x: s.x,
+      y: s.y,
+      type: "scatter",
+      mode: "lines",
+      name: outcomeLabel(f.outcome)
+    }], {
+      title: outcomeLabel(f.outcome),
+      xaxis: { title: "Time" },
+      yaxis: { title: outcomeLabel(f.outcome) },
+      margin: { t: 50, l: 60, r: 20, b: 50 }
+    }, { displayModeBar: false, responsive: true });
   }
 
   function populateControls() {
@@ -130,11 +138,22 @@
     elMarket.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join("");
     elInstrument.innerHTML = instruments.map(s => `<option value="${s}">${s}</option>`).join("");
 
-    // defaults
+    // Populate outcomes based on actual available columns
+    const sample = rows[0] || {};
+    const availableOutcomes = OUTCOMES.filter(o => Object.prototype.hasOwnProperty.call(sample, o.key));
+    elOutcome.innerHTML = availableOutcomes.map(o => `<option value="${o.key}">${o.label}</option>`).join("");
+
+    // Defaults
     if (markets.includes("Total")) elMarket.value = "Total";
     if (instruments.includes("Tax")) elInstrument.value = "Tax";
     elCbam.value = "0";
     elLevel.value = "0";
+
+    // Default outcome preference order
+    const preferred = ["emissions_total", "marketQuantity", "profit_total", "price"];
+    const availableKeys = new Set(availableOutcomes.map(o => o.key));
+    const firstPreferred = preferred.find(k => availableKeys.has(k));
+    elOutcome.value = firstPreferred || (availableOutcomes[0] ? availableOutcomes[0].key : "");
   }
 
   function attachHandlers() {
@@ -142,32 +161,45 @@
     elInstrument.addEventListener("change", draw);
     elCbam.addEventListener("change", draw);
     elLevel.addEventListener("input", draw);
+    elOutcome.addEventListener("change", draw);
   }
 
-  // Load CSV
+  // ---- Load CSV ----
   const text = await (await fetch(CSV_URL, { cache: "no-store" })).text();
   const parsed = Papa.parse(text, { header: true, dynamicTyping: true, skipEmptyLines: true });
 
-  rows = parsed.data.map(r => ({
+  rows = (parsed.data || []).map(r => ({
     market: String(r.market),
     instrument: String(r.instrument),
     cbam: parseNum(r.cbam),
     level: parseNum(r.level),
     time: parseNum(r.time),
 
+    // metrics (include all you might plot)
     price: parseNum(r.price),
-
-    emissions_total: parseNum(r.emissions_total),
-    profit_total: parseNum(r.profit_total),
     marketQuantity: parseNum(r.marketQuantity),
     imports: parseNum(r.imports),
+    leakage: parseNum(r.leakage),
+    consumerSurplus: parseNum(r.consumerSurplus),
+    carbonRevenue: parseNum(r.carbonRevenue),
+    damage: parseNum(r.damage),
+    importProfit: parseNum(r.importProfit),
+
+    profit_total: parseNum(r.profit_total),
+    emissions_total: parseNum(r.emissions_total),
+    investCost_total: parseNum(r.investCost_total),
+    quantityProduced_total: parseNum(r.quantityProduced_total),
   })).filter(r =>
     r.market && r.instrument &&
     r.cbam !== null && r.level !== null && r.time !== null
   );
 
+  if (rows.length === 0) {
+    Plotly.purge(PLOT_ID);
+    return;
+  }
+
   populateControls();
   attachHandlers();
   draw();
 })();
-

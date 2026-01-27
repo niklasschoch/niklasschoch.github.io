@@ -21,7 +21,7 @@ repository               : "niklasschoch/niklasschoch.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "Profile.png"
+  avatar           : "ProfilePicture.jpg"
   name             : "Niklas Schoch"
   bio              : "PhD student in Economics"
   location         : "Paris, France"
@@ -173,13 +173,9 @@ collections:
   publications:
     output: true
     permalink: /:collection/:path/
-  portfolio:
+  policy:
     output: true
-    permalink: /:collection/:path/
-  talks:
-    output: true
-    permalink: /:collection/:path/
-
+    permalink: /policy/:name/
 
 # These settings control how pages and collections are included in the site
 defaults:

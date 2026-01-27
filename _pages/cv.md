@@ -1,22 +1,12 @@
 ---
-layout: archive
 title: "CV"
-title: "Download my resume: [here](https://niklasschoch.github.io/files/CV_Niklas_Schoch.pdf)"
+permalink: /cv/
+layout: single
 author_profile: true
-redirect_from:
-  - /resume
 ---
 
-{% include base_path %}
+You can view or download my CV below.
 
-Publications
-======
-  <ul>{% for post in site.publications reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
+<iframe src="/files/CV_Schoch.pdf" width="100%" height="800px" style="border: none;">
+  This browser does not support PDFs. Please download the PDF to view it: <a href="/files/CV_Schoch_Academic.pdf">Download CV</a>.
+</iframe>

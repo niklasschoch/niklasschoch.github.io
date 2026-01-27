@@ -5,8 +5,6 @@ permalink: /carbonpolicy-simulator/
 author_profile: true
 ---
 
-#Welcome to my carbon policy simulator!
-
 <div id="sim-controls" class="sim-controls">
   <label>Market
     <select id="ctrl-market"></select>

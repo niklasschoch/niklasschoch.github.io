@@ -141,9 +141,7 @@
 
     const label = outcomeLabel(outcome);
     const maxY = s.y.length > 0 ? Math.max(...s.y) : 0;
-    const minY = s.y.length > 0 ? Math.min(...s.y) : 0;
-    const range = maxY - minY;
-    const padding = range > 0 ? range * 0.1 : 1;
+    const upper = 1.25 * maxY;
 
     Plotly.newPlot("plot-main", [{
       x: s.x,
@@ -156,7 +154,7 @@
       xaxis: { title: "Time" },
       yaxis: {
         title: label,
-        range: [minY - padding, maxY + padding]
+        range: [0, upper]
       },
       margin: { t: 50, l: 60, r: 20, b: 50 }
     }, { displayModeBar: false, responsive: true });
@@ -177,7 +175,7 @@
     }
 
     elMarket.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join("");
-    elInstrument.innerHTML = instruments.map(s => `<option value="${s}">${s}</option>`).join("");
+    elInstrument.innerHTML = instruments.map(inst => `<option value="${inst}">${inst}</option>`).join("");
 
     // Populate outcome dropdown with available metrics
     const availableOutcomes = [

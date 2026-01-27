@@ -154,7 +154,8 @@
       xaxis: { title: "Time" },
       yaxis: {
         title: label,
-        range: [0, upper]
+        range: [0, upper],
+        autorange: false
       },
       margin: { t: 50, l: 60, r: 20, b: 50 }
     }, { displayModeBar: false, responsive: true });

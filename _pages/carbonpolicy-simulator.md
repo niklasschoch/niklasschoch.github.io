@@ -33,11 +33,7 @@ author_profile: true
   </label>
 </div>
 
-<div class="sim-grid">
-  <div id="plot-emissions"></div>
-  <div id="plot-output"></div>
-  <div id="plot-profit"></div>
-</div>
+<div id="plot-main"></div>
 
 <link rel="stylesheet" href="/assets/css/carbonpolicy-sim.css">
 

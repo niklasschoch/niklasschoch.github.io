@@ -118,6 +118,12 @@
     const s = series(data, f.outcome);
 
     Plotly.newPlot(PLOT_ID, [{
+    const s = series(data, f.outcome);
+
+    const maxY = s.y.length ? Math.max(...s.y) : 0;
+    const upper = 1.25 * maxY;
+
+    Plotly.newPlot(PLOT_ID, [{
       x: s.x,
       y: s.y,
       type: "scatter",
@@ -126,7 +132,10 @@
     }], {
       title: outcomeLabel(f.outcome),
       xaxis: { title: "Time" },
-      yaxis: { title: outcomeLabel(f.outcome) },
+      yaxis: {
+        title: outcomeLabel(f.outcome),
+        range: [0, upper]
+      },
       margin: { t: 50, l: 60, r: 20, b: 50 }
     }, { displayModeBar: false, responsive: true });
   }

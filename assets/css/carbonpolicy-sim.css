@@ -1,67 +1,28 @@
-/* Carbon Policy Simulator Styles */
-
 .sim-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+  gap: 14px;
+  margin: 12px 0 18px 0;
+  align-items: center;
 }
 
 .sim-controls label {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-weight: 500;
-  color: #333;
+  gap: 8px;
+  align-items: center;
 }
 
-.sim-controls select,
-.sim-controls input[type="range"] {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  background-color: white;
+.sim-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
 }
 
-.sim-controls select {
-  min-width: 150px;
-  cursor: pointer;
-}
-
-.sim-controls input[type="range"] {
-  width: 200px;
-  cursor: pointer;
-}
-
-#ctrl-level-label {
-  font-weight: 600;
-  color: #0066cc;
-  margin-left: 0.5rem;
-}
-
-#plot-main {
-  width: 100%;
-  min-height: 400px;
-  margin-top: 1rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .sim-controls {
-    flex-direction: column;
-    gap: 1rem;
+@media (min-width: 900px) {
+  .sim-grid {
+    grid-template-columns: 1fr 1fr;
   }
-  
-  .sim-controls label {
-    width: 100%;
-  }
-  
-  .sim-controls select,
-  .sim-controls input[type="range"] {
-    width: 100%;
+  #plot-profit {
+    grid-column: 1 / span 2;
   }
 }

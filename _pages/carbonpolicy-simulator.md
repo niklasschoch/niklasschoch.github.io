@@ -5,29 +5,34 @@ permalink: /carbonpolicy-simulator/
 author_profile: true
 ---
 
-Hello!
+On this page, you can explore the main results of my JMP. The values show the development of the French Cement industry over time. 
 
 <div id="sim-controls" class="sim-controls">
-  <label>Market
+  <label>
+    <span>Market</span>
     <select id="ctrl-market"></select>
   </label>
 
-  <label>Instrument
+  <label>
+    <span>Instrument</span>
     <select id="ctrl-instrument"></select>
   </label>
 
-  <label>Outcome
-  <select id="ctrl-outcome"></select>
+  <label>
+    <span>Outcome</span>
+    <select id="ctrl-outcome"></select>
   </label>
 
-  <label>CBAM
+  <label>
+    <span>CBAM</span>
     <select id="ctrl-cbam">
       <option value="0">Off</option>
       <option value="1">On</option>
     </select>
   </label>
 
-  <label>Level
+  <label>
+    <span>Level</span>
     <input id="ctrl-level" type="range" min="0" max="0" step="1" />
     <span id="ctrl-level-label"></span>
   </label>

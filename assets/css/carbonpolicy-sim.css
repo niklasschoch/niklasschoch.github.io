@@ -1,21 +1,142 @@
 .sim-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin: 12px 0 18px 0;
-  align-items: center;
+  gap: 1.5rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  align-items: flex-end;
 }
 
 .sim-controls label {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 140px;
+  flex: 1 1 auto;
+}
+
+.sim-controls label:first-child {
+  flex: 0 0 auto;
+}
+
+.sim-controls label > span:first-of-type {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.sim-controls label:last-child > span:first-of-type {
+  margin-bottom: 0.5rem;
+}
+
+.sim-controls select,
+.sim-controls input[type="range"] {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+.sim-controls select:hover {
+  border-color: #adb5bd;
+}
+
+.sim-controls select:focus {
+  outline: 0;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.sim-controls input[type="range"] {
+  padding: 0;
+  background-image: none;
+  padding-right: 0;
+  height: 6px;
+  background-color: #dee2e6;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.sim-controls input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background-color: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.sim-controls input[type="range"]::-webkit-slider-thumb:hover {
+  background-color: #0056b3;
+}
+
+.sim-controls input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background-color: #007bff;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.sim-controls input[type="range"]::-moz-range-thumb:hover {
+  background-color: #0056b3;
+}
+
+#ctrl-level-label {
+  font-weight: 600;
+  color: #007bff;
+  font-size: 0.9375rem;
+  margin-top: 0.25rem;
+  min-height: 1.5rem;
+  display: flex;
   align-items: center;
+}
+
+#plot-main {
+  width: 100%;
+  min-height: 400px;
+  margin-top: 1rem;
 }
 
 .sim-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sim-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+
+  .sim-controls label {
+    min-width: 100%;
+  }
 }
 
 @media (min-width: 900px) {

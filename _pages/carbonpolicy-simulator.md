@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "CarbonPolicy Simulator"
+title: "Carbon Policy Simulator"
 permalink: /carbonpolicy-simulator/
 author_profile: true
 ---

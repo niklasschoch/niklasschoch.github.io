@@ -16,6 +16,10 @@ author_profile: true
     <select id="ctrl-instrument"></select>
   </label>
 
+  <label>Outcome
+  <select id="ctrl-outcome"></select>
+  </label>
+
   <label>CBAM
     <select id="ctrl-cbam">
       <option value="0">Off</option>

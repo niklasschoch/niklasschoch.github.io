@@ -5,7 +5,7 @@ permalink: /carbonpolicy-simulator/
 author_profile: true
 ---
 
-On this page, you can explore the main results of my JMP. The values show the development of the French Cement industry over time. 
+On this page, you can explore the main results of my JMP. The model simulates the development of the French cement industry over time when facing  different environmental regulations. Intially, firms operate with the full emission intensity (set at 0.6kg CO2-equivalent per kg of cement produced) and face the full burden of the regulation. Over time, the firms but can invest to reduce their emission intensity, and thus ease the burden of regulation. The developments plotted over time reflect the investment behaviour. The model parameters can be found in this Read-Me. The computational details are described in the paper. 
 
 <div id="sim-controls" class="sim-controls">
   <label>

@@ -97,17 +97,33 @@
     const cbamText = cbam === 1 ? "with CBAM" : "without CBAM";
     const instrumentText = instrument.toLowerCase();
     const marketText = marketLabel(market);
-    const levelText = level !== null ? ` at level ${level}` : "";
+    
+    // Format level text based on instrument type
+    let levelText = "";
+    if (level !== null) {
+      if (instrument.toLowerCase() === "tax") {
+        levelText = ` at a carbon tax of ${level} per ton of CO2 emitted`;
+      } else if (instrument.toLowerCase() === "subsidy") {
+        levelText = ` at a CAPEX subsidy of ${level}%`;
+      } else {
+        levelText = ` at level ${level}`;
+      }
+    }
+    
+    // Add carbon tax note for subsidy scenarios
+    const carbonTaxNote = instrument.toLowerCase() === "subsidy" 
+      ? " The carbon tax set for the subsidy scenario is 45 per ton of CO2 emitted."
+      : "";
     
     const descriptions = {
-      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Emissions represent the total carbon dioxide equivalent emitted in megatonnes.`,
-      "profit_total": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Profit represents the total operating profit of domestic producers.`,
-      "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.`,
-      "imports": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.`,
-      "price": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.`
+      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Emissions represent the total carbon dioxide equivalent emitted in megatonnes.${carbonTaxNote}`,
+      "profit_total": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Profit represents the total operating profit of domestic producers.${carbonTaxNote}`,
+      "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
+      "imports": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
+      "price": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`
     };
     
-    return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market under a ${instrumentText} ${cbamText}${levelText}.`;
+    return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market under a ${instrumentText} ${cbamText}${levelText}.${carbonTaxNote}`;
   }
 
   function filterRows() {

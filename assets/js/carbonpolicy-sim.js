@@ -206,14 +206,6 @@
     const tickVals = tickYears.map(year => (year - 2025) / 3);
     const tickText = tickYears.map(year => year.toString());
 
-    // Calculate y-axis ticks excluding zero
-    const numYTicks = 5;
-    const yTickStep = upper / numYTicks;
-    const yTickVals = [];
-    for (let i = yTickStep; i <= upper; i += yTickStep) {
-      yTickVals.push(i);
-    }
-
     Plotly.newPlot("plot-main", [{
       x: s.x,
       y: s.y,
@@ -237,13 +229,31 @@
         title: label,
         range: [0, upper],
         autorange: false,
-        tickmode: "array",
-        tickvals: yTickVals,
         ticklabelposition: "outside",
         title: {
           text: label,
           standoff: 20
-        }
+        },
+        // Calculate ticks including zero, but hide zero label
+        tickmode: "array",
+        tickvals: (function() {
+          const numTicks = 5;
+          const step = upper / numTicks;
+          const vals = [0]; // Include zero
+          for (let i = step; i <= upper; i += step) {
+            vals.push(i);
+          }
+          return vals;
+        })(),
+        ticktext: (function() {
+          const numTicks = 5;
+          const step = upper / numTicks;
+          const texts = [""]; // Empty string for zero
+          for (let i = step; i <= upper; i += step) {
+            texts.push(i.toFixed(1));
+          }
+          return texts;
+        })()
       },
       margin: { t: 50, l: 70, r: 30, b: 60 }
     }, { displayModeBar: false, responsive: true });

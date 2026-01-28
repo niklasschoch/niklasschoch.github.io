@@ -62,6 +62,14 @@
     return [...new Set(arr)].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   }
 
+  const TONNE_OUTCOMES = new Set([
+    "emissions_total", "marketQuantity", "imports", "quantityProduced_total", "leakage"
+  ]);
+
+  function outcomeUsesTonnes(key) {
+    return TONNE_OUTCOMES.has(key);
+  }
+
   function outcomeLabel(key) {
     const labels = {
       "emissions_total": "Domestic emissions",
@@ -108,7 +116,7 @@
       if (instrument.toLowerCase() === "tax") {
         levelText = ` at a carbon tax of ${level} EUR per ton of CO2 emitted`;
       } else if (instrument.toLowerCase() === "subsidy") {
-        levelText = ` at a CAPEX subsidy of ${level}%`;
+        levelText = ` at a CAPEX subsidy of ${level * 100}%`;
       } else {
         levelText = ` at level ${level}`;
       }
@@ -126,7 +134,7 @@
       "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
       "price": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`,
       "quantityProduced_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic quantity represents the total amount of cement produced domestically.${carbonTaxNote}`,
-      "leakage": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Leakage represents carbon emissions displaced abroad due to the policy.${carbonTaxNote}`
+      "leakage": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Leakage represents carbon emissions embedded in cement imports.${carbonTaxNote}`
     };
     
     return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market ${cbamText}${levelText}.${carbonTaxNote}`;
@@ -160,7 +168,7 @@
     elLevel.value = Math.max(0, idx);
 
     const level = levelGrid.length ? levelGrid[Number(elLevel.value)] : null;
-    elLevelLabel.textContent = (level === null) ? "" : String(level);
+    elLevelLabel.textContent = (level === null) ? "" : (instrument.toLowerCase() === "subsidy" ? String(level * 100) : String(level));
 
     // final filtered set including level
     return candidates.filter(r => r.level === level);
@@ -200,8 +208,14 @@
       return;
     }
 
+    const useMt = outcomeUsesTonnes(outcome);
+    const useMillionEur = outcome === "profit_total";
+    const scaleBy1000 = useMt || useMillionEur;
+    const yPlot = scaleBy1000 ? s.y.map(v => v / 1000) : s.y;
+
     const label = outcomeLabel(outcome);
-    const maxY = s.y.length > 0 ? Math.max(...s.y) : 0;
+    const yAxisLabel = useMt ? `${label} (in Mt)` : useMillionEur ? `${label} (EUR million)` : label;
+    const maxY = yPlot.length > 0 ? Math.max(...yPlot) : 0;
     const upper = 1.25 * maxY;
 
     // Calculate y-axis ticks with round numbers, excluding zero label
@@ -233,7 +247,7 @@
 
     Plotly.newPlot("plot-main", [{
       x: s.x,
-      y: s.y,
+      y: yPlot,
       type: "scatter",
       mode: "lines",
       name: label
@@ -251,7 +265,7 @@
         }
       },
       yaxis: {
-        title: label,
+        title: yAxisLabel,
         range: [0, upper],
         autorange: false,
         tickmode: "array",
@@ -259,7 +273,7 @@
         ticktext: yTickText,
         ticklabelposition: "outside",
         title: {
-          text: label,
+          text: yAxisLabel,
           standoff: 20
         }
       },

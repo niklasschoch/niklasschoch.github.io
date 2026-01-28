@@ -64,11 +64,13 @@
 
   function outcomeLabel(key) {
     const labels = {
-      "emissions_total": "Emissions (total)",
-      "profit_total": "Profit (total)",
+      "emissions_total": "Domestic emissions",
+      "profit_total": "Profits",
       "marketQuantity": "Market quantity",
       "imports": "Imports",
-      "price": "Price"
+      "price": "Price",
+      "quantityProduced_total": "Domestic quantity",
+      "leakage": "Leakage"
     };
     return labels[key] || key;
   }
@@ -86,11 +88,13 @@
 
   function generateDescription(outcome, market, instrument, cbam, level) {
     const outcomeLabels = {
-      "emissions_total": "total emissions",
-      "profit_total": "total profit",
-      "marketQuantity": "market quantity",
+      "emissions_total": "domestic emissions",
+      "profit_total": "total operating profits of domestic firms",
+      "marketQuantity": "total market quantity, including imports and domestic production",
       "imports": "imports",
-      "price": "price"
+      "price": "price",
+      "quantityProduced_total": "domestic production",
+      "leakage": "leakage"
     };
     
     const outcomeDesc = outcomeLabels[outcome] || outcome;
@@ -116,14 +120,16 @@
       : "";
     
     const descriptions = {
-      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Emissions represent the total carbon dioxide equivalent emitted in megatonnes.${carbonTaxNote}`,
-      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Profit represents the total operating profit of domestic producers.${carbonTaxNote}`,
-      "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
-      "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
-      "price": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`
+      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic emissions represent the total carbon dioxide equivalent emitted in megatonnes.${carbonTaxNote}`,
+      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Profit represents the total operating profit of domestic producers.${carbonTaxNote}`,
+      "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
+      "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
+      "price": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`,
+      "quantityProduced_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic quantity represents the total amount of cement produced domestically.${carbonTaxNote}`,
+      "leakage": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Leakage represents carbon emissions displaced abroad due to the policy.${carbonTaxNote}`
     };
     
-    return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market under a ${instrumentText} ${cbamText}${levelText}.${carbonTaxNote}`;
+    return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market ${cbamText}${levelText}.${carbonTaxNote}`;
   }
 
   function filterRows() {
@@ -289,11 +295,13 @@
 
     // Populate outcome dropdown with available metrics
     const availableOutcomes = [
-      { key: "emissions_total", label: "Emissions (total)" },
+      { key: "emissions_total", label: "Domestic Emissions" },
       { key: "profit_total", label: "Profit (total)" },
       { key: "marketQuantity", label: "Market quantity" },
       { key: "imports", label: "Imports" },
-      { key: "price", label: "Price" }
+      { key: "price", label: "Price" },
+      { key: "quantityProduced_total", label: "Domestic quantity" },
+      { key: "leakage", label: "Leakage" }
     ];
     
     // Check which outcomes are actually available in the data
@@ -368,6 +376,8 @@
       profit_total: parseNum(r.profit_total),
       marketQuantity: parseNum(r.marketQuantity),
       imports: parseNum(r.imports),
+      quantityProduced_total: parseNum(r.quantityProduced_total),
+      leakage: parseNum(r.leakage),
     })).filter(r =>
       r.market && r.instrument &&
       r.cbam !== null && r.level !== null && r.time !== null

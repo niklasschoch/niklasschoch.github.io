@@ -198,6 +198,25 @@
     const maxY = s.y.length > 0 ? Math.max(...s.y) : 0;
     const upper = 1.25 * maxY;
 
+    // Calculate y-axis ticks with round numbers, excluding zero label
+    const numYTicks = 5;
+    const rawStep = upper / numYTicks;
+    // Round step to nice number
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const normalizedStep = rawStep / magnitude;
+    let niceStep;
+    if (normalizedStep <= 1) niceStep = magnitude;
+    else if (normalizedStep <= 2) niceStep = 2 * magnitude;
+    else if (normalizedStep <= 5) niceStep = 5 * magnitude;
+    else niceStep = 10 * magnitude;
+    
+    const yTickVals = [0]; // Include zero for tick mark
+    const yTickText = [""]; // Empty label for zero
+    for (let i = niceStep; i <= upper; i += niceStep) {
+      yTickVals.push(Math.round(i));
+      yTickText.push(Math.round(i).toString());
+    }
+
     // Calculate tick positions and labels for years (every 5 years)
     // Period 0 = 2025, each period = 3 years
     // We want ticks at: 2025, 2030, 2035, 2040, 2045, 2050, 2055
@@ -229,54 +248,14 @@
         title: label,
         range: [0, upper],
         autorange: false,
+        tickmode: "array",
+        tickvals: yTickVals,
+        ticktext: yTickText,
         ticklabelposition: "outside",
         title: {
           text: label,
           standoff: 20
-        },
-        // Calculate ticks including zero, but hide zero label
-        // Round to nice numbers
-        tickmode: "array",
-        tickvals: (function() {
-          // Calculate nice round step size
-          const magnitude = Math.pow(10, Math.floor(Math.log10(upper)));
-          const normalized = upper / magnitude;
-          let niceStep;
-          if (normalized <= 1) niceStep = magnitude;
-          else if (normalized <= 2) niceStep = 2 * magnitude;
-          else if (normalized <= 5) niceStep = 5 * magnitude;
-          else niceStep = 10 * magnitude;
-          
-          // Adjust step to get approximately 5 ticks
-          const numTicks = Math.ceil(upper / niceStep);
-          const step = Math.ceil(upper / numTicks / magnitude) * magnitude;
-          
-          const vals = [0]; // Include zero
-          for (let i = step; i <= upper; i += step) {
-            vals.push(Math.round(i));
-          }
-          return vals;
-        })(),
-        ticktext: (function() {
-          // Calculate nice round step size
-          const magnitude = Math.pow(10, Math.floor(Math.log10(upper)));
-          const normalized = upper / magnitude;
-          let niceStep;
-          if (normalized <= 1) niceStep = magnitude;
-          else if (normalized <= 2) niceStep = 2 * magnitude;
-          else if (normalized <= 5) niceStep = 5 * magnitude;
-          else niceStep = 10 * magnitude;
-          
-          // Adjust step to get approximately 5 ticks
-          const numTicks = Math.ceil(upper / niceStep);
-          const step = Math.ceil(upper / numTicks / magnitude) * magnitude;
-          
-          const texts = [""]; // Empty string for zero
-          for (let i = step; i <= upper; i += step) {
-            texts.push(Math.round(i).toString());
-          }
-          return texts;
-        })()
+        }
       },
       margin: { t: 50, l: 70, r: 30, b: 60 }
     }, { displayModeBar: false, responsive: true });

@@ -192,6 +192,12 @@
     };
   }
 
+  function levelTraceLabel(level, instrument) {
+    if (instrument.toLowerCase() === "subsidy") return `Level ${level * 100}%`;
+    if (instrument.toLowerCase() === "tax") return `Level ${level} EUR`;
+    return `Level ${level}`;
+  }
+
   function draw() {
     if (!elOutcome) {
       return;
@@ -199,6 +205,10 @@
 
     const data = filterRows();
     const outcome = elOutcome.value;
+    const market = elMarket.value;
+    const instrument = elInstrument.value;
+    const cbam = Number(elCbam.value);
+    const level = levelGrid.length > 0 ? levelGrid[Number(elLevel.value)] : null;
 
     if (!outcome || data.length === 0) {
       Plotly.purge("plot-main");
@@ -215,11 +225,32 @@
     const useMt = outcomeUsesTonnes(outcome);
     const useMillionEur = outcome === "profit_total";
     const scaleBy1000 = useMt || useMillionEur;
-    const yPlot = scaleBy1000 ? s.y.map(v => v / 1000) : s.y;
+    const scale = (ys) => scaleBy1000 ? ys.map(v => v / 1000) : ys;
+
+    const yPlot = scale(s.y);
+
+    // Baseline (level 0) for same market, instrument, cbam – include when level !== 0
+    const baselineRows = rows.filter(r =>
+      r.market === market && r.instrument === instrument && r.cbam === cbam && r.level === 0
+    );
+    const addBaseline = baselineRows.length > 0 && level !== 0;
+    let sBaseline = null;
+    if (addBaseline) {
+      sBaseline = series(baselineRows, outcome);
+      if (sBaseline.x.length > 0 && sBaseline.y.length > 0) {
+        sBaseline = { x: sBaseline.x, y: scale(sBaseline.y) };
+      } else {
+        sBaseline = null;
+      }
+    }
 
     const label = outcomeLabel(outcome);
     const yAxisLabel = useMt ? `${label} (in Mt)` : useMillionEur ? `${label} (EUR million)` : label;
-    const maxY = yPlot.length > 0 ? Math.max(...yPlot) : 0;
+    let maxY = yPlot.length > 0 ? Math.max(...yPlot) : 0;
+    if (sBaseline && sBaseline.y.length > 0) {
+      const baseMax = Math.max(...sBaseline.y);
+      if (baseMax > maxY) maxY = baseMax;
+    }
     const upper = 1.25 * maxY;
 
     // Calculate y-axis ticks with round numbers, excluding zero label
@@ -252,14 +283,37 @@
     const tickVals = tickYears.map(year => (year - 2025) / 3);
     const tickText = tickYears.map(year => year.toString());
 
-    Plotly.newPlot("plot-main", [{
+    const traces = [];
+    if (addBaseline && sBaseline) {
+      traces.push({
+        x: sBaseline.x,
+        y: sBaseline.y,
+        type: "scatter",
+        mode: "lines",
+        name: "Baseline"
+      });
+    }
+    traces.push({
       x: s.x,
       y: yPlot,
       type: "scatter",
       mode: "lines",
-      name: label
-    }], {
+      name: level === 0 ? "Baseline" : (level !== null ? levelTraceLabel(level, instrument) : label)
+    });
+
+    Plotly.newPlot("plot-main", traces, {
       title: label,
+      showlegend: true,
+      legend: {
+        x: 1,
+        y: 1,
+        xanchor: "right",
+        yanchor: "top",
+        orientation: "v",
+        bgcolor: "rgba(255,255,255,0.8)",
+        bordercolor: "#ccc",
+        borderwidth: 1
+      },
       xaxis: { 
         tickmode: "array",
         tickvals: tickVals,
@@ -284,15 +338,11 @@
           standoff: 20
         }
       },
-      margin: { t: 50, l: 70, r: 30, b: 60 }
+      margin: { t: 50, l: 70, r: 100, b: 60 }
     }, { displayModeBar: false, responsive: true });
 
     // Update description
     if (elDescription) {
-      const market = elMarket.value;
-      const instrument = elInstrument.value;
-      const cbam = Number(elCbam.value);
-      const level = levelGrid.length > 0 ? levelGrid[Number(elLevel.value)] : null;
       elDescription.textContent = generateDescription(outcome, market, instrument, cbam, level);
     }
   }

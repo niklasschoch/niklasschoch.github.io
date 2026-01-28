@@ -76,10 +76,10 @@
   function marketLabel(market) {
     const labels = {
       "Total": "all of France",
-      "NorthEast": "North-East of France",
-      "NorthWest": "North-West of France",
-      "SouthEast": "South-East of France",
-      "SouthWest": "South-West of France"
+      "NorthEast": "the North-East of France",
+      "NorthWest": "the North-West of France",
+      "SouthEast": "the South-East of France",
+      "SouthWest": "the South-West of France"
     };
     return labels[market] || market;
   }
@@ -102,7 +102,7 @@
     let levelText = "";
     if (level !== null) {
       if (instrument.toLowerCase() === "tax") {
-        levelText = ` at a carbon tax of ${level} per ton of CO2 emitted`;
+        levelText = ` at a carbon tax of ${level} EUR per ton of CO2 emitted`;
       } else if (instrument.toLowerCase() === "subsidy") {
         levelText = ` at a CAPEX subsidy of ${level}%`;
       } else {
@@ -116,11 +116,11 @@
       : "";
     
     const descriptions = {
-      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Emissions represent the total carbon dioxide equivalent emitted in megatonnes.${carbonTaxNote}`,
-      "profit_total": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Profit represents the total operating profit of domestic producers.${carbonTaxNote}`,
-      "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
-      "imports": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
-      "price": `This plot shows the evolution of ${outcomeDesc} in the ${marketText} under a ${instrumentText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`
+      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Emissions represent the total carbon dioxide equivalent emitted in megatonnes.${carbonTaxNote}`,
+      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Profit represents the total operating profit of domestic producers.${carbonTaxNote}`,
+      "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
+      "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
+      "price": `This plot shows the evolution of ${outcomeDesc} in ${marketText} under a ${instrumentText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`
     };
     
     return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market under a ${instrumentText} ${cbamText}${levelText}.${carbonTaxNote}`;

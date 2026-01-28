@@ -2,9 +2,6 @@ main:
   - title: "Research"
     url: /research/
 
-  - title: "Carbon Policy Simulator"
-    url: /carbonpolicy-simulator/
-
   - title: "Teaching"
     url: /teaching/
 
@@ -13,3 +10,6 @@ main:
 
   - title: "CV"
     url: /cv/
+
+  - title: "Carbon Policy Simulator"
+    url: /carbonpolicy-simulator/

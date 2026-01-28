@@ -73,7 +73,7 @@
   function outcomeLabel(key) {
     const labels = {
       "emissions_total": "Domestic emissions",
-      "profit_total": "Profits",
+      "profit_total": "Industry profits",
       "marketQuantity": "Market quantity",
       "imports": "Imports",
       "price": "Price",
@@ -128,8 +128,8 @@
       : "";
     
     const descriptions = {
-      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic emissions represent the total carbon dioxide equivalent emitted in megatonnes.${carbonTaxNote}`,
-      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Profit represents the total operating profit of domestic producers.${carbonTaxNote}`,
+      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic emissions represent the carbon dioxide equivalent emitted in megatonnes by domestic producers.${carbonTaxNote}`,
+      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Profit represents the variable operating profits of domestic producers. The model does not account for fixed operating and overhead costs.${carbonTaxNote}`,
       "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
       "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
       "price": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`,
@@ -221,20 +221,23 @@
     // Calculate y-axis ticks with round numbers, excluding zero label
     const numYTicks = 5;
     const rawStep = upper / numYTicks;
-    // Round step to nice number
     const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
     const normalizedStep = rawStep / magnitude;
     let niceStep;
-    if (normalizedStep <= 1) niceStep = magnitude;
-    else if (normalizedStep <= 2) niceStep = 2 * magnitude;
-    else if (normalizedStep <= 5) niceStep = 5 * magnitude;
-    else niceStep = 10 * magnitude;
-    
-    const yTickVals = [0]; // Include zero for tick mark
-    const yTickText = [""]; // Empty label for zero
+    if (upper <= 2) {
+      niceStep = 0.5; // Use 0.5 steps for small ranges (e.g. Mt when max < 1)
+    } else {
+      if (normalizedStep <= 1) niceStep = magnitude;
+      else if (normalizedStep <= 2) niceStep = 2 * magnitude;
+      else if (normalizedStep <= 5) niceStep = 5 * magnitude;
+      else niceStep = 10 * magnitude;
+    }
+
+    const yTickVals = [0];
+    const yTickText = [""];
     for (let i = niceStep; i <= upper; i += niceStep) {
-      yTickVals.push(Math.round(i));
-      yTickText.push(Math.round(i).toString());
+      yTickVals.push(i);
+      yTickText.push(i % 1 === 0 ? i.toString() : i.toFixed(1));
     }
 
     // Calculate tick positions and labels for years (every 5 years)
@@ -310,7 +313,7 @@
     // Populate outcome dropdown with available metrics
     const availableOutcomes = [
       { key: "emissions_total", label: "Domestic Emissions" },
-      { key: "profit_total", label: "Profit (total)" },
+      { key: "profit_total", label: "Industry profits" },
       { key: "marketQuantity", label: "Market quantity" },
       { key: "imports", label: "Imports" },
       { key: "price", label: "Price" },

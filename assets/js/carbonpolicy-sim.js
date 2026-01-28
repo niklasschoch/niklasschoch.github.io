@@ -235,22 +235,45 @@
           standoff: 20
         },
         // Calculate ticks including zero, but hide zero label
+        // Round to nice numbers
         tickmode: "array",
         tickvals: (function() {
-          const numTicks = 5;
-          const step = upper / numTicks;
+          // Calculate nice round step size
+          const magnitude = Math.pow(10, Math.floor(Math.log10(upper)));
+          const normalized = upper / magnitude;
+          let niceStep;
+          if (normalized <= 1) niceStep = magnitude;
+          else if (normalized <= 2) niceStep = 2 * magnitude;
+          else if (normalized <= 5) niceStep = 5 * magnitude;
+          else niceStep = 10 * magnitude;
+          
+          // Adjust step to get approximately 5 ticks
+          const numTicks = Math.ceil(upper / niceStep);
+          const step = Math.ceil(upper / numTicks / magnitude) * magnitude;
+          
           const vals = [0]; // Include zero
           for (let i = step; i <= upper; i += step) {
-            vals.push(i);
+            vals.push(Math.round(i));
           }
           return vals;
         })(),
         ticktext: (function() {
-          const numTicks = 5;
-          const step = upper / numTicks;
+          // Calculate nice round step size
+          const magnitude = Math.pow(10, Math.floor(Math.log10(upper)));
+          const normalized = upper / magnitude;
+          let niceStep;
+          if (normalized <= 1) niceStep = magnitude;
+          else if (normalized <= 2) niceStep = 2 * magnitude;
+          else if (normalized <= 5) niceStep = 5 * magnitude;
+          else niceStep = 10 * magnitude;
+          
+          // Adjust step to get approximately 5 ticks
+          const numTicks = Math.ceil(upper / niceStep);
+          const step = Math.ceil(upper / numTicks / magnitude) * magnitude;
+          
           const texts = [""]; // Empty string for zero
           for (let i = step; i <= upper; i += step) {
-            texts.push(i.toFixed(1));
+            texts.push(Math.round(i).toString());
           }
           return texts;
         })()

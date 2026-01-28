@@ -192,9 +192,15 @@
     };
   }
 
+  function baselineLabel(instrument) {
+    if (instrument.toLowerCase() === "tax") return "No Tax";
+    if (instrument.toLowerCase() === "subsidy") return "No Subsidy";
+    return "Baseline";
+  }
+
   function levelTraceLabel(level, instrument) {
-    if (instrument.toLowerCase() === "subsidy") return `Level ${level * 100}%`;
-    if (instrument.toLowerCase() === "tax") return `Level ${level} EUR`;
+    if (instrument.toLowerCase() === "tax") return `Tax level ${level}`;
+    if (instrument.toLowerCase() === "subsidy") return `Subsidy Level ${level * 100}`;
     return `Level ${level}`;
   }
 
@@ -290,7 +296,7 @@
         y: sBaseline.y,
         type: "scatter",
         mode: "lines",
-        name: "Baseline"
+        name: baselineLabel(instrument)
       });
     }
     traces.push({
@@ -298,7 +304,7 @@
       y: yPlot,
       type: "scatter",
       mode: "lines",
-      name: level === 0 ? "Baseline" : (level !== null ? levelTraceLabel(level, instrument) : label)
+      name: level === 0 ? baselineLabel(instrument) : (level !== null ? levelTraceLabel(level, instrument) : label)
     });
 
     Plotly.newPlot("plot-main", traces, {

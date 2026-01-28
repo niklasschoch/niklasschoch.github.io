@@ -162,13 +162,14 @@
 
   function series(data, yKey) {
     // sort by time; keep nulls out
+    // Keep periods for smooth plotting (no kinks)
     const s = data
       .map(r => ({ t: r.time, y: r[yKey] }))
       .filter(p => p.t !== null && p.y !== null)
       .sort((a, b) => a.t - b.t);
 
     return {
-      x: s.map(p => p.t),
+      x: s.map(p => p.t), // Keep periods for smooth plotting
       y: s.map(p => p.y)
     };
   }
@@ -197,6 +198,14 @@
     const maxY = s.y.length > 0 ? Math.max(...s.y) : 0;
     const upper = 1.25 * maxY;
 
+    // Calculate tick positions and labels for years (every 5 years)
+    // Period 0 = 2025, each period = 3 years
+    // We want ticks at: 2025, 2030, 2035, 2040, 2045, 2050, 2055
+    // Convert years to periods: period = (year - 2025) / 3
+    const tickYears = [2025, 2030, 2035, 2040, 2045, 2050, 2055];
+    const tickVals = tickYears.map(year => (year - 2025) / 3);
+    const tickText = tickYears.map(year => year.toString());
+
     Plotly.newPlot("plot-main", [{
       x: s.x,
       y: s.y,
@@ -205,7 +214,13 @@
       name: label
     }], {
       title: label,
-      xaxis: { title: "Time" },
+      xaxis: { 
+        title: "Year",
+        tickmode: "array",
+        tickvals: tickVals,
+        ticktext: tickText,
+        range: [0, 10] // Periods 0 to 10 (2025 to 2055)
+      },
       yaxis: {
         title: label,
         range: [0, upper],

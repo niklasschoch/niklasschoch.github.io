@@ -5,7 +5,7 @@ permalink: /carbonpolicy-simulator/
 author_profile: true
 ---
 
-On this page, you can explore the main results of my JMP. The model simulates the development of the French cement industry over time when facing different environmental regulations. Initially, firms operate with the full emission intensity (set at 0.6 kg of CO2-equivalent per kg of cement produced) and face the full burden of the regulation. Over time, firms can invest to reduce their emission intensity, and thus ease the cost of regulation. The developments plotted over time reflect this investment behaviour. A brief description of the model and parameters can be found in this [Read-Me](/assets/data/Read_Me_Simulator.pdf){:target="_blank"}. For further details on the model and computations, I refer to the original paper.
+With this tool, you can explore the main results of my JMP. The model simulates the development of the French cement industry over time when facing different environmental regulations. Initially, firms operate with the full emission intensity (set at 0.6 kg of CO2-equivalent per kg of cement produced) and face the full burden of the regulation. Over time, firms can invest to reduce their emission intensity, and thus ease the cost of regulation. The developments plotted over time reflect this investment behaviour. A brief description of the model and parameters can be found [here](/assets/data/Read_Me_Simulator.pdf){:target="_blank"}. For further details on the model and computations, I refer to the original paper.
 
 I plan to add more scenarios and industries over time. If you have any questions, feedback, or run into issues, please reach out at **niklas.schoch@sciencespo.fr**. 
 

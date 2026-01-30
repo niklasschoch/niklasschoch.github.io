@@ -251,7 +251,7 @@
     }
 
     const label = outcomeLabel(outcome);
-    const yAxisLabel = useMt ? `${label} (in Mt)` : useMillionEur ? `${label} (EUR million)` : label;
+    const yAxisLabel = useMt ? `${label} (in Mt)` : useMillionEur ? `${label} (EUR million)` : outcome === "price" ? `${label} (EUR/ton)` : label;
     let maxY = yPlot.length > 0 ? Math.max(...yPlot) : 0;
     if (sBaseline && sBaseline.y.length > 0) {
       const baseMax = Math.max(...sBaseline.y);

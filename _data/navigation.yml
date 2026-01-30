@@ -10,3 +10,6 @@ main:
 
   - title: "CV"
     url: /cv/
+
+  - title: "Carbon Policy Simulator"
+    url: /carbonpolicy-simulator/

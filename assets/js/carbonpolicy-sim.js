@@ -204,6 +204,34 @@
     return `Level ${level}`;
   }
 
+  function downloadPlotCSV() {
+    const data = filterRows();
+    const outcome = elOutcome?.value;
+    if (!outcome || data.length === 0) return;
+    const outcomeCol = outcomeLabel(outcome);
+    const sorted = [...data].sort((a, b) => (a.time ?? 0) - (b.time ?? 0));
+    const header = ["time", "year", outcomeCol];
+    const yearBase = 2025;
+    const periodLength = 3;
+    const lines = [header.join(",")];
+    for (const r of sorted) {
+      const t = r.time;
+      const y = r[outcome];
+      if (t == null || y == null) continue;
+      const year = yearBase + t * periodLength;
+      const row = [t, year, String(y)];
+      lines.push(row.join(","));
+    }
+    const csv = lines.join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "carbonpolicy-plot-data.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   function draw() {
     if (!elOutcome) {
       return;
@@ -417,6 +445,8 @@
     elCbam.addEventListener("change", draw);
     elLevel.addEventListener("input", draw);
     elOutcome.addEventListener("change", draw);
+    const btnCsv = document.getElementById("btn-download-csv");
+    if (btnCsv) btnCsv.addEventListener("click", downloadPlotCSV);
   }
 
   // Load CSV with error handling

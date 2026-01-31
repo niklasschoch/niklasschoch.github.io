@@ -113,6 +113,23 @@
   align-items: center;
 }
 
+.sim-download-btn {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  white-space: nowrap;
+}
+
+.sim-download-btn:hover {
+  background-color: #0056b3;
+}
+
 #plot-main {
   width: 100%;
   min-height: 400px;

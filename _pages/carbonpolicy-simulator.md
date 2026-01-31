@@ -38,6 +38,8 @@ I plan to add more scenarios and industries over time. If you have any questions
     <input id="ctrl-level" type="range" min="0" max="0" step="1" />
     <span id="ctrl-level-label"></span>
   </label>
+
+  <button type="button" id="btn-download-csv" class="sim-download-btn">Download CSV</button>
 </div>
 
 <div id="plot-main"></div>

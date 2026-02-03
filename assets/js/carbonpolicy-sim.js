@@ -122,12 +122,13 @@
     const marketText = marketLabel(market);
     
     // Format level text based on instrument type
+    const fmtSubsidyPct = (l) => Math.round(l * 100);
     let levelText = "";
     if (level !== null) {
       if (instrument.toLowerCase() === "tax") {
-        levelText = ` at a carbon tax of ${level} EUR per ton of CO2 emitted`;
+        levelText = ` at a carbon tax of ${Math.round(level)} EUR per ton of CO2 emitted`;
       } else if (instrument.toLowerCase() === "subsidy") {
-        levelText = ` at a CAPEX subsidy of ${level * 100}%`;
+        levelText = ` at a CAPEX subsidy of ${fmtSubsidyPct(level)}%`;
       } else {
         levelText = ` at level ${level}`;
       }
@@ -183,7 +184,7 @@
     elLevel.value = Math.max(0, idx);
 
     const level = levelGrid.length ? levelGrid[Number(elLevel.value)] : null;
-    elLevelLabel.textContent = (level === null) ? "" : (instrument.toLowerCase() === "subsidy" ? String(level * 100) : String(level));
+    elLevelLabel.textContent = (level === null) ? "" : (instrument.toLowerCase() === "subsidy" ? String(Math.round(level * 100)) : String(Math.round(level)));
 
     // final filtered set including level
     return candidates.filter(r => r.level === level);
@@ -460,7 +461,7 @@
   function policyLabel(market, instrument, cbam, level) {
     const cbamText = cbam === 1 ? "CBAM" : "no CBAM";
     const levelText = instrument.toLowerCase() === "subsidy"
-      ? `${level * 100}%` : `${level}`;
+      ? `${Math.round(level * 100)}%` : `${Math.round(level)}`;
     return `${market} ${instrument} ${levelText} ${cbamText}`;
   }
 
@@ -520,8 +521,9 @@
     const cbam = Number(elC.value);
     const grid = getLevelGrid(market, instrument, cbam);
     const isSubsidy = instrument.toLowerCase() === "subsidy";
+    const fmtLevel = (l) => isSubsidy ? Math.round(l * 100) : Math.round(l);
     elL.innerHTML = grid.map((lvl, i) =>
-      `<option value="${i}">${isSubsidy ? lvl * 100 : lvl}</option>`
+      `<option value="${i}">${fmtLevel(lvl)}</option>`
     ).join("");
   }
 

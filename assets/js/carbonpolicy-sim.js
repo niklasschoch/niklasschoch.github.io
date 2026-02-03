@@ -635,9 +635,7 @@
         color: values.map(v => v >= 0 ? "rgba(200,80,80,0.8)" : "rgba(80,160,80,0.8)"),
         line: { width: 0 }
       },
-      text: values.map(v => (v >= 0 ? "+" : "") + v.toFixed(1) + "%"),
-      textposition: values.map(v => v < 0 ? "inside" : "outside"),
-      textfont: { size: 12 }
+      hoverinfo: "skip"
     };
 
     const xRange = Math.max(20, Math.ceil(Math.max(...values.map(Math.abs)) * 1.2));

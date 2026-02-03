@@ -46,6 +46,35 @@ I plan to add more scenarios and industries over time. If you have any questions
 
 <div id="plot-description" class="plot-description"></div>
 
+<hr class="sim-section-divider" />
+
+<h2 id="policy-comparison-heading">Policy Comparison</h2>
+<p class="sim-section-intro">Compare two policies by percentage change in key outcomes. Choose NPV (discounted sum over time) or a single year.</p>
+
+<div id="comparison-controls" class="comparison-controls">
+  <div class="comparison-policy">
+    <h3>Policy A (baseline)</h3>
+    <label><span>Market</span><select id="comp-market-a"></select></label>
+    <label><span>Instrument</span><select id="comp-instrument-a"></select></label>
+    <label><span>CBAM</span><select id="comp-cbam-a"><option value="0">Off</option><option value="1">On</option></select></label>
+    <label><span>Level</span><select id="comp-level-a"></select></label>
+  </div>
+  <div class="comparison-policy">
+    <h3>Policy B</h3>
+    <label><span>Market</span><select id="comp-market-b"></select></label>
+    <label><span>Instrument</span><select id="comp-instrument-b"></select></label>
+    <label><span>CBAM</span><select id="comp-cbam-b"><option value="0">Off</option><option value="1">On</option></select></label>
+    <label><span>Level</span><select id="comp-level-b"></select></label>
+  </div>
+  <div class="comparison-mode">
+    <h3>Comparison mode</h3>
+    <label><span>Mode</span><select id="comp-mode"><option value="npv">NPV (all periods)</option><option value="year">Single year</option></select></label>
+    <label id="comp-year-label"><span>Year</span><select id="comp-year"></select></label>
+  </div>
+</div>
+
+<div id="comparison-plot" class="comparison-plot"></div>
+
 <link rel="stylesheet" href="/assets/css/carbonpolicy-sim.css">
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>

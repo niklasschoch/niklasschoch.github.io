@@ -148,6 +148,82 @@
   font-style: italic;
 }
 
+/* Policy comparison section */
+.sim-section-divider {
+  margin: 3rem 0 2rem;
+  border: none;
+  border-top: 1px solid #dee2e6;
+}
+
+.sim-section-intro {
+  margin-bottom: 1.5rem;
+  font-size: 0.9375rem;
+  color: #495057;
+}
+
+.comparison-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.comparison-policy,
+.comparison-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 160px;
+}
+
+.comparison-policy h3,
+.comparison-mode h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.comparison-policy label,
+.comparison-mode label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.comparison-policy label > span:first-of-type,
+.comparison-mode label > span:first-of-type {
+  font-size: 0.8125rem;
+  color: #6c757d;
+}
+
+.comparison-policy select,
+.comparison-mode select {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.comparison-plot {
+  min-height: 280px;
+  margin-top: 1rem;
+}
+
+.comparison-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+}
+
 .sim-grid {
   display: grid;
   grid-template-columns: 1fr;

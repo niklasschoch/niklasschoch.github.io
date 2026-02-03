@@ -66,6 +66,17 @@
     "emissions_total", "marketQuantity", "imports", "quantityProduced_total", "leakage"
   ]);
 
+  // Policy comparison: discount params (match Aggregator_Website.R / model)
+  const DISCOUNT_FACTOR = 0.975;
+  const PERIOD_LENGTH = 3;
+  const YEAR_BASE = 2025;
+  const COMPARISON_OUTCOMES = [
+    { key: "emissions_total", label: "Emissions" },
+    { key: "leakage", label: "Leakage" },
+    { key: "consumerSurplus", label: "Consumer surplus" },
+    { key: "profit_total", label: "Industry profits" }
+  ];
+
   function outcomeUsesTonnes(key) {
     return TONNE_OUTCOMES.has(key);
   }
@@ -439,6 +450,211 @@
     }
   }
 
+  function getLevelGrid(market, instrument, cbam) {
+    const candidates = rows.filter(r =>
+      r.market === market && r.instrument === instrument && r.cbam === cbam
+    );
+    return uniqSorted(candidates.map(r => r.level));
+  }
+
+  function policyLabel(market, instrument, cbam, level) {
+    const cbamText = cbam === 1 ? "CBAM" : "no CBAM";
+    const levelText = instrument.toLowerCase() === "subsidy"
+      ? `${level * 100}%` : `${level}`;
+    return `${market} ${instrument} ${levelText} ${cbamText}`;
+  }
+
+  function populateComparisonControls() {
+    const markets = uniqSorted(rows.map(r => r.market));
+    const instruments = uniqSorted(rows.map(r => r.instrument));
+    const years = [];
+    for (let y = YEAR_BASE; y <= 2055; y += PERIOD_LENGTH) years.push(y);
+
+    ["a", "b"].forEach(suffix => {
+      const elM = document.getElementById(`comp-market-${suffix}`);
+      const elI = document.getElementById(`comp-instrument-${suffix}`);
+      const elC = document.getElementById(`comp-cbam-${suffix}`);
+      const elL = document.getElementById(`comp-level-${suffix}`);
+      if (!elM || !elI || !elC || !elL) return;
+      elM.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join("");
+      elI.innerHTML = instruments.map(i => `<option value="${i}">${i}</option>`).join("");
+      updateComparisonLevelOptions(suffix);
+    });
+
+    const elYear = document.getElementById("comp-year");
+    if (elYear) elYear.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
+    const idx2040 = years.indexOf(2040);
+    if (elYear && idx2040 >= 0) elYear.value = "2040";
+    else if (elYear && years.length) elYear.value = String(years[Math.floor(years.length / 2)]);
+
+    const elMode = document.getElementById("comp-mode");
+    const elYearLabel = document.getElementById("comp-year-label");
+    if (elYearLabel) elYearLabel.style.display = (elMode && elMode.value === "year") ? "flex" : "none";
+
+    // Defaults: Policy A = baseline (level 0), Policy B = first policy level
+    ["a", "b"].forEach(suffix => {
+      const elM = document.getElementById(`comp-market-${suffix}`);
+      const elI = document.getElementById(`comp-instrument-${suffix}`);
+      const elC = document.getElementById(`comp-cbam-${suffix}`);
+      const elL = document.getElementById(`comp-level-${suffix}`);
+      if (elM && elM.querySelector('option[value="Total"]')) elM.value = "Total";
+      else if (elM && elM.options.length) elM.value = elM.options[0].value;
+      if (elI && elI.querySelector('option[value="Tax"]')) elI.value = "Tax";
+      else if (elI && elI.options.length) elI.value = elI.options[0].value;
+      if (elC) elC.value = "0";
+      updateComparisonLevelOptions(suffix);
+      if (elL && elL.options.length) {
+        elL.value = String(suffix === "a" ? 0 : Math.min(1, elL.options.length - 1));
+      }
+    });
+  }
+
+  function updateComparisonLevelOptions(suffix) {
+    const elM = document.getElementById(`comp-market-${suffix}`);
+    const elI = document.getElementById(`comp-instrument-${suffix}`);
+    const elC = document.getElementById(`comp-cbam-${suffix}`);
+    const elL = document.getElementById(`comp-level-${suffix}`);
+    if (!elM || !elI || !elC || !elL) return;
+    const market = elM.value;
+    const instrument = elI.value;
+    const cbam = Number(elC.value);
+    const grid = getLevelGrid(market, instrument, cbam);
+    const isSubsidy = instrument.toLowerCase() === "subsidy";
+    elL.innerHTML = grid.map((lvl, i) =>
+      `<option value="${i}">${isSubsidy ? lvl * 100 : lvl}</option>`
+    ).join("");
+  }
+
+  function getPolicySelection(suffix) {
+    const elM = document.getElementById(`comp-market-${suffix}`);
+    const elI = document.getElementById(`comp-instrument-${suffix}`);
+    const elC = document.getElementById(`comp-cbam-${suffix}`);
+    const elL = document.getElementById(`comp-level-${suffix}`);
+    if (!elM || !elI || !elC || !elL) return null;
+    const market = elM.value;
+    const instrument = elI.value;
+    const cbam = Number(elC.value);
+    const grid = getLevelGrid(market, instrument, cbam);
+    const levelIdx = Math.min(Number(elL.value || 0), grid.length - 1);
+    const level = grid.length ? grid[levelIdx] : null;
+    return { market, instrument, cbam, level };
+  }
+
+  function getPolicyRows(policy) {
+    if (!policy || policy.level == null) return [];
+    return rows.filter(r =>
+      r.market === policy.market &&
+      r.instrument === policy.instrument &&
+      r.cbam === policy.cbam &&
+      r.level === policy.level
+    );
+  }
+
+  function computeNPV(data, key) {
+    let sum = 0;
+    for (const r of data) {
+      const t = r.time;
+      const v = r[key];
+      if (t == null || v == null) continue;
+      sum += v * Math.pow(DISCOUNT_FACTOR, t * PERIOD_LENGTH);
+    }
+    return sum;
+  }
+
+  function getValueAtTime(data, key, year) {
+    const period = (year - YEAR_BASE) / PERIOD_LENGTH;
+    const r = data.find(d => d.time === period);
+    return r && r[key] != null ? r[key] : null;
+  }
+
+  function drawComparison() {
+    const elPlot = document.getElementById("comparison-plot");
+    if (!elPlot) return;
+
+    const policyA = getPolicySelection("a");
+    const policyB = getPolicySelection("b");
+    const elMode = document.getElementById("comp-mode");
+    const elYear = document.getElementById("comp-year");
+    const mode = elMode ? elMode.value : "npv";
+    const year = elYear ? Number(elYear.value) : 2040;
+
+    if (!policyA || !policyB) {
+      Plotly.purge("comparison-plot");
+      elPlot.innerHTML = "";
+      return;
+    }
+
+    const rowsA = getPolicyRows(policyA);
+    const rowsB = getPolicyRows(policyB);
+    if (rowsA.length === 0 || rowsB.length === 0) {
+      Plotly.purge("comparison-plot");
+      elPlot.innerHTML = "<p class='comparison-empty'>No data for one or both policies.</p>";
+      return;
+    }
+
+    const pctChanges = [];
+    const labels = [];
+    const values = [];
+
+    for (const { key, label } of COMPARISON_OUTCOMES) {
+      let valA, valB;
+      if (mode === "npv") {
+        valA = computeNPV(rowsA, key);
+        valB = computeNPV(rowsB, key);
+      } else {
+        valA = getValueAtTime(rowsA, key, year);
+        valB = getValueAtTime(rowsB, key, year);
+      }
+      if (valA == null || valB == null) continue;
+      const denom = Math.abs(valA);
+      const pct = denom > 1e-10 ? ((valB - valA) / denom) * 100 : null;
+      if (pct == null) continue;
+      labels.push(label);
+      values.push(pct);
+      pctChanges.push({ label, pct, valA, valB });
+    }
+
+    if (labels.length === 0) {
+      Plotly.purge("comparison-plot");
+      elPlot.innerHTML = "<p class='comparison-empty'>Could not compute comparison.</p>";
+      return;
+    }
+
+    const subTitle = mode === "npv"
+      ? `NPV (Policy B vs Policy A)`
+      : `Year ${year} (Policy B vs Policy A)`;
+
+    const trace = {
+      x: values,
+      y: labels,
+      type: "bar",
+      orientation: "h",
+      marker: {
+        color: values.map(v => v >= 0 ? "rgba(200,80,80,0.8)" : "rgba(80,160,80,0.8)"),
+        line: { width: 0 }
+      },
+      text: values.map(v => (v >= 0 ? "+" : "") + v.toFixed(1) + "%"),
+      textposition: "outside",
+      textfont: { size: 12 }
+    };
+
+    const xRange = Math.max(20, Math.ceil(Math.max(...values.map(Math.abs)) * 1.2));
+    Plotly.newPlot("comparison-plot", [trace], {
+      title: { text: "Percentage change", font: { size: 16 } },
+      margin: { t: 50, l: 140, r: 80, b: 50 },
+      xaxis: {
+        title: subTitle,
+        range: [-xRange, xRange],
+        zeroline: true,
+        zerolinewidth: 1,
+        zerolinecolor: "#333"
+      },
+      yaxis: { automargin: true },
+      showlegend: false,
+      bargap: 0.4
+    }, { displayModeBar: false, responsive: true });
+  }
+
   function attachHandlers() {
     elMarket.addEventListener("change", draw);
     elInstrument.addEventListener("change", draw);
@@ -447,6 +663,29 @@
     elOutcome.addEventListener("change", draw);
     const btnCsv = document.getElementById("btn-download-csv");
     if (btnCsv) btnCsv.addEventListener("click", downloadPlotCSV);
+
+    ["a", "b"].forEach(suffix => {
+      const elM = document.getElementById(`comp-market-${suffix}`);
+      const elI = document.getElementById(`comp-instrument-${suffix}`);
+      const elC = document.getElementById(`comp-cbam-${suffix}`);
+      const elL = document.getElementById(`comp-level-${suffix}`);
+      [elM, elI, elC].forEach(el => {
+        if (el) el.addEventListener("change", () => {
+          updateComparisonLevelOptions(suffix);
+          drawComparison();
+        });
+      });
+      if (elL) elL.addEventListener("change", drawComparison);
+    });
+
+    const elMode = document.getElementById("comp-mode");
+    const elYear = document.getElementById("comp-year");
+    const elYearLabel = document.getElementById("comp-year-label");
+    if (elMode) elMode.addEventListener("change", () => {
+      if (elYearLabel) elYearLabel.style.display = elMode.value === "year" ? "flex" : "none";
+      drawComparison();
+    });
+    if (elYear) elYear.addEventListener("change", drawComparison);
   }
 
   // Load CSV with error handling
@@ -478,6 +717,7 @@
       time: parseNum(r.time),
 
       price: parseNum(r.price),
+      consumerSurplus: parseNum(r.consumerSurplus),
 
       emissions_total: parseNum(r.emissions_total),
       profit_total: parseNum(r.profit_total),
@@ -497,8 +737,10 @@
     console.log(`Carbon Policy Simulator: Loaded ${rows.length} rows successfully`);
 
     populateControls();
+    populateComparisonControls();
     attachHandlers();
     draw();
+    drawComparison();
   } catch (error) {
     console.error("Carbon Policy Simulator error:", error);
     const plotEl = document.getElementById("plot-main");

@@ -636,14 +636,14 @@
         line: { width: 0 }
       },
       text: values.map(v => (v >= 0 ? "+" : "") + v.toFixed(1) + "%"),
-      textposition: "outside",
+      textposition: values.map(v => v < 0 ? "inside" : "outside"),
       textfont: { size: 12 }
     };
 
     const xRange = Math.max(20, Math.ceil(Math.max(...values.map(Math.abs)) * 1.2));
     Plotly.newPlot("comparison-plot", [trace], {
       title: { text: "Percentage change", font: { size: 16 } },
-      margin: { t: 50, l: 140, r: 80, b: 50 },
+      margin: { t: 50, l: 160, r: 90, b: 50 },
       xaxis: {
         title: subTitle,
         range: [-xRange, xRange],

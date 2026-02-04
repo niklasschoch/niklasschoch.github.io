@@ -590,6 +590,7 @@
 
   function drawComparison() {
     const elPlot = document.getElementById("comparison-plot");
+    const elDesc = document.getElementById("comparison-description");
     if (!elPlot) return;
 
     const policyA = getPolicySelection("a");
@@ -610,6 +611,7 @@
     if (rowsA.length === 0 || rowsB.length === 0) {
       Plotly.purge("comparison-plot");
       elPlot.innerHTML = "<p class='comparison-empty'>No data for one or both policies.</p>";
+      if (elDesc) elDesc.textContent = "";
       return;
     }
 

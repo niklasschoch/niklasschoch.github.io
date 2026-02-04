@@ -75,6 +75,8 @@ I plan to add more scenarios and industries over time. If you have any questions
 
 <div id="comparison-plot" class="comparison-plot"></div>
 
+<div id="comparison-description" class="plot-description"></div>
+
 <link rel="stylesheet" href="/assets/css/carbonpolicy-sim.css">
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>

@@ -465,6 +465,25 @@
     return `${market} ${instrument} ${levelText} ${cbamText}`;
   }
 
+  function policyDescFragment(market, instrument, cbam, level) {
+    const marketText = marketLabel(market);
+    const cbamText = cbam === 1 ? "with CBAM" : "without CBAM";
+    const isSubsidy = instrument.toLowerCase() === "subsidy";
+    const levelText = level != null
+      ? (isSubsidy ? `at a CAPEX subsidy of ${Math.round(level * 100)}%` : `at a carbon tax of ${Math.round(level)} EUR per ton of CO2 emitted`)
+      : "";
+    return `${marketText}, ${instrument} ${levelText}, ${cbamText}`;
+  }
+
+  function generateComparisonDescription(policyA, policyB, mode, year) {
+    const descA = policyDescFragment(policyA.market, policyA.instrument, policyA.cbam, policyA.level);
+    const descB = policyDescFragment(policyB.market, policyB.instrument, policyB.cbam, policyB.level);
+    const modeText = mode === "npv"
+      ? "as the discounted sum over all periods (NPV)"
+      : `at a single point in time (year ${year})`;
+    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}). Values are compared ${modeText}.`;
+  }
+
   function populateComparisonControls() {
     const markets = uniqSorted(rows.map(r => r.market));
     const instruments = uniqSorted(rows.map(r => r.instrument));
@@ -619,6 +638,7 @@
     if (labels.length === 0) {
       Plotly.purge("comparison-plot");
       elPlot.innerHTML = "<p class='comparison-empty'>Could not compute comparison.</p>";
+      if (elDesc) elDesc.textContent = "";
       return;
     }
 
@@ -653,6 +673,10 @@
       showlegend: false,
       bargap: 0.4
     }, { displayModeBar: false, responsive: true });
+
+    if (elDesc) {
+      elDesc.textContent = generateComparisonDescription(policyA, policyB, mode, year);
+    }
   }
 
   function attachHandlers() {

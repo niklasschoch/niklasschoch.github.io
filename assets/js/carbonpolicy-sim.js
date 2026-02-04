@@ -74,7 +74,8 @@
     { key: "emissions_total", label: "Emissions" },
     { key: "leakage", label: "Leakage" },
     { key: "consumerSurplus", label: "Consumer surplus" },
-    { key: "profit_total", label: "Industry profits" }
+    { key: "profit_total", label: "Industry profits" },
+    { key: "investCost_total", label: "Investment cost" }
   ];
 
   function outcomeUsesTonnes(key) {
@@ -89,7 +90,8 @@
       "imports": "Imports",
       "price": "Price",
       "quantityProduced_total": "Domestic quantity",
-      "leakage": "Leakage"
+      "leakage": "Leakage",
+      "investCost_total": "Investment cost"
     };
     return labels[key] || key;
   }
@@ -113,7 +115,8 @@
       "imports": "imports",
       "price": "price",
       "quantityProduced_total": "domestic production",
-      "leakage": "leakage"
+      "leakage": "leakage",
+      "investCost_total": "investment cost"
     };
     
     const outcomeDesc = outcomeLabels[outcome] || outcome;
@@ -145,12 +148,13 @@
     
     const descriptions = {
       "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic emissions represent the carbon dioxide equivalent emitted in megatonnes by domestic producers.${zeroTaxEmissionsNote}${carbonTaxNote}`,
-      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Profit represents the variable operating profits of domestic producers. The model does not account for fixed operating and overhead costs.${carbonTaxNote}`,
+      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Profit represents the variable operating profits of domestic producers. The plotted values do not account for investment cost. The model does not account for fixed operating and overhead costs.${carbonTaxNote}`,
       "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
       "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
       "price": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`,
       "quantityProduced_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic quantity represents the total amount of cement produced domestically.${carbonTaxNote}`,
-      "leakage": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Leakage represents carbon emissions embedded in cement imports.${carbonTaxNote}`
+      "leakage": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Leakage represents carbon emissions embedded in cement imports.${carbonTaxNote}`,
+      "investCost_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Investment cost represents the capital expenditure on low-carbon technology adoption by domestic producers. The investment cost can be negative for low tax levels. The reason is that the stochastic nature of the cost allows for negative costs to occur. Conceptually, this represents the fact that green investments may be cheaper than grey investments.${carbonTaxNote}`
     };
     
     return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market ${cbamText}${levelText}.${carbonTaxNote}`;
@@ -269,7 +273,7 @@
     }
 
     const useMt = outcomeUsesTonnes(outcome);
-    const useMillionEur = outcome === "profit_total";
+    const useMillionEur = outcome === "profit_total" || outcome === "investCost_total";
     const scaleBy1000 = useMt || useMillionEur;
     const scale = (ys) => scaleBy1000 ? ys.map(v => v / 1000) : ys;
 
@@ -418,7 +422,8 @@
       { key: "imports", label: "Imports" },
       { key: "price", label: "Price" },
       { key: "quantityProduced_total", label: "Domestic quantity" },
-      { key: "leakage", label: "Leakage" }
+      { key: "leakage", label: "Leakage" },
+      { key: "investCost_total", label: "Investment cost" }
     ];
     
     // Check which outcomes are actually available in the data
@@ -481,7 +486,7 @@
     const modeText = mode === "npv"
       ? "as the discounted sum over all periods (NPV)"
       : `at a single point in time (year ${year})`;
-    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}). Values are compared ${modeText}.`;
+    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, industry profits, and investment cost when moving from Policy A (${descA}) to Policy B (${descB}). Values are compared ${modeText}.`;
   }
 
   function populateComparisonControls() {
@@ -749,6 +754,7 @@
       imports: parseNum(r.imports),
       quantityProduced_total: parseNum(r.quantityProduced_total),
       leakage: parseNum(r.leakage),
+      investCost_total: parseNum(r.investCost_total),
     })).filter(r =>
       r.market && r.instrument &&
       r.cbam !== null && r.level !== null && r.time !== null

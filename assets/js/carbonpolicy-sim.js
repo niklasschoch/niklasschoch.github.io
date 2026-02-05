@@ -535,6 +535,11 @@
     const elC = document.getElementById(`comp-cbam-${suffix}`);
     const elL = document.getElementById(`comp-level-${suffix}`);
     if (!elM || !elI || !elC || !elL) return;
+
+    // Get the displayed level value from the currently selected option before rebuilding
+    const selectedOption = elL.options[elL.selectedIndex];
+    const oldDisplayedLevel = selectedOption ? Number(selectedOption.textContent) : null;
+
     const market = elM.value;
     const instrument = elI.value;
     const cbam = Number(elC.value);
@@ -544,6 +549,14 @@
     elL.innerHTML = grid.map((lvl, i) =>
       `<option value="${i}">${fmtLevel(lvl)}</option>`
     ).join("");
+
+    // Try to restore the same displayed level if it exists in the new grid
+    if (oldDisplayedLevel !== null) {
+      const newIdx = grid.findIndex(l => fmtLevel(l) === oldDisplayedLevel);
+      if (newIdx >= 0) {
+        elL.value = String(newIdx);
+      }
+    }
   }
 
   function getPolicySelection(suffix) {

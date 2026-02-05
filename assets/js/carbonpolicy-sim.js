@@ -139,12 +139,10 @@
       ? " The carbon tax set for the subsidy scenario is 45 per ton of CO2 emitted."
       : "";
 
-    const zeroTaxEmissionsNote = (outcome === "emissions_total" && instrument.toLowerCase() === "tax" && level === 0)
-      ? " Even without a tax, emissions decline naturally over time due to some efficiency progress."
-      : "";
+    const efficiencyNote = " Even without policy intervention, emissions decline naturally over time due to some efficiency progress.";
     
     const descriptions = {
-      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic emissions represent the carbon dioxide equivalent emitted in megatonnes by domestic producers.${zeroTaxEmissionsNote}${carbonTaxNote}`,
+      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic emissions represent the carbon dioxide equivalent emitted in megatonnes by domestic producers.${efficiencyNote}${carbonTaxNote}`,
       "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Profit represents the variable operating profits of domestic producers. The plotted values do not account for investment cost. The model does not account for fixed operating and overhead costs.${carbonTaxNote}`,
       "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
       "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,

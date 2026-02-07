@@ -468,9 +468,9 @@
     const cbamText = cbam === 1 ? "with CBAM" : "without CBAM";
     const isSubsidy = instrument.toLowerCase() === "subsidy";
     const levelText = level != null
-      ? (isSubsidy ? `at a CAPEX subsidy of ${Math.round(level * 100)}%` : `at a carbon tax of ${Math.round(level)} EUR per ton of CO2 emitted`)
+      ? (isSubsidy ? `with a CAPEX subsidy of ${Math.round(level * 100)}% (and a carbon tax of 60\u20AC)` : `with a carbon tax level of ${Math.round(level)} EUR per ton`)
       : "";
-    return `${marketText}, ${instrument} ${levelText}, ${cbamText}`;
+    return `${marketText}, ${levelText}, ${cbamText}`;
   }
 
   function fmtEur(value) {
@@ -510,7 +510,7 @@
     const timeFrame = mode === "npv" ? "over the next 30 years" : `in ${year}`;
     const budgetA = computeBudgetLine(policyA, rowsA, mode, year);
     const budgetB = computeBudgetLine(policyB, rowsB, mode, year);
-    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}) ${timeFrame}. Policy A ${budgetA}. In contrast, Policy B ${budgetB}.`;
+    return `<strong>Policy A:</strong> ${descA}<br><strong>Policy B:</strong> ${descB}<br><br>This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A to Policy B ${timeFrame}. Policy A ${budgetA}. In contrast, Policy B ${budgetB}.`;
   }
 
   function populateComparisonControls() {
@@ -653,7 +653,7 @@
     if (rowsA.length === 0 || rowsB.length === 0) {
       Plotly.purge("comparison-plot");
       elPlot.innerHTML = "<p class='comparison-empty'>No data for one or both policies.</p>";
-      if (elDesc) elDesc.textContent = "";
+      if (elDesc) elDesc.innerHTML = "";
       return;
     }
 
@@ -682,7 +682,7 @@
     if (labels.length === 0) {
       Plotly.purge("comparison-plot");
       elPlot.innerHTML = "<p class='comparison-empty'>Could not compute comparison.</p>";
-      if (elDesc) elDesc.textContent = "";
+      if (elDesc) elDesc.innerHTML = "";
       return;
     }
 
@@ -719,7 +719,7 @@
     }, { displayModeBar: false, responsive: true });
 
     if (elDesc) {
-      elDesc.textContent = generateComparisonDescription(policyA, policyB, mode, year, rowsA, rowsB);
+      elDesc.innerHTML = generateComparisonDescription(policyA, policyB, mode, year, rowsA, rowsB);
     }
   }
 

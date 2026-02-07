@@ -136,7 +136,7 @@
     
     // Add carbon tax note for subsidy scenarios
     const carbonTaxNote = instrument.toLowerCase() === "subsidy" 
-      ? " The carbon tax set for the subsidy scenario is 45 per ton of CO2 emitted."
+      ? " The carbon tax set for the subsidy scenario is 60 per ton of CO2 emitted."
       : "";
 
     const efficiencyNote = " Even without policy intervention, emissions decline naturally over time due to some efficiency progress.";

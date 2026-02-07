@@ -473,13 +473,48 @@
     return `${marketText}, ${instrument} ${levelText}, ${cbamText}`;
   }
 
-  function generateComparisonDescription(policyA, policyB, mode, year) {
+  function fmtEur(value) {
+    if (value == null) return "N/A";
+    const millions = value / 1000;
+    return millions.toFixed(1) + " million EUR";
+  }
+
+  function computeBudgetLine(policy, policyRows, mode, year) {
+    let revenue = null;
+    let subsidyCost = null;
+
+    if (mode === "npv") {
+      revenue = computeNPV(policyRows, "carbonRevenue");
+      const investNPV = computeNPV(policyRows, "investCost_total");
+      if (policy.instrument.toLowerCase() === "subsidy" && policy.level != null) {
+        subsidyCost = policy.level * investNPV;
+      }
+    } else {
+      revenue = getValueAtTime(policyRows, "carbonRevenue", year);
+      const invest = getValueAtTime(policyRows, "investCost_total", year);
+      if (policy.instrument.toLowerCase() === "subsidy" && policy.level != null && invest != null) {
+        subsidyCost = policy.level * invest;
+      }
+    }
+
+    const timeFrame = mode === "npv" ? " within the next 30 years" : ` in ${year}`;
+    let text = `generates ${fmtEur(revenue)} in carbon tax revenue`;
+    if (subsidyCost != null) {
+      text += ` and costs ${fmtEur(subsidyCost)} in subsidies`;
+    }
+    text += timeFrame;
+    return text;
+  }
+
+  function generateComparisonDescription(policyA, policyB, mode, year, rowsA, rowsB) {
     const descA = policyDescFragment(policyA.market, policyA.instrument, policyA.cbam, policyA.level);
     const descB = policyDescFragment(policyB.market, policyB.instrument, policyB.cbam, policyB.level);
     const modeText = mode === "npv"
       ? "as the discounted sum over all periods (NPV)"
       : `at a single point in time (year ${year})`;
-    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}). Values are compared ${modeText}.`;
+    const budgetA = computeBudgetLine(policyA, rowsA, mode, year);
+    const budgetB = computeBudgetLine(policyB, rowsB, mode, year);
+    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}). Values are compared ${modeText}. Policy A ${budgetA}. Policy B ${budgetB}.`;
   }
 
   function populateComparisonControls() {
@@ -688,7 +723,7 @@
     }, { displayModeBar: false, responsive: true });
 
     if (elDesc) {
-      elDesc.textContent = generateComparisonDescription(policyA, policyB, mode, year);
+      elDesc.textContent = generateComparisonDescription(policyA, policyB, mode, year, rowsA, rowsB);
     }
   }
 
@@ -762,6 +797,8 @@
       imports: parseNum(r.imports),
       quantityProduced_total: parseNum(r.quantityProduced_total),
       leakage: parseNum(r.leakage),
+      carbonRevenue: parseNum(r.carbonRevenue),
+      investCost_total: parseNum(r.investCost_total),
     })).filter(r =>
       r.market && r.instrument &&
       r.cbam !== null && r.level !== null && r.time !== null

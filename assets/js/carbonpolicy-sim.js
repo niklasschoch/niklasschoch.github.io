@@ -497,12 +497,10 @@
       }
     }
 
-    const timeFrame = mode === "npv" ? " within the next 30 years" : ` in ${year}`;
     let text = `generates ${fmtEur(revenue)} in carbon tax revenue`;
     if (subsidyCost != null) {
       text += ` and costs ${fmtEur(subsidyCost)} in subsidies`;
     }
-    text += timeFrame;
     return text;
   }
 
@@ -514,7 +512,8 @@
       : `at a single point in time (year ${year})`;
     const budgetA = computeBudgetLine(policyA, rowsA, mode, year);
     const budgetB = computeBudgetLine(policyB, rowsB, mode, year);
-    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}). Values are compared ${modeText}. Policy A ${budgetA}. Policy B ${budgetB}.`;
+    const timeFrame = mode === "npv" ? " over the next 30 years" : ` in ${year}`;
+    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}). Values are compared ${modeText}. Policy A ${budgetA}${timeFrame}. In contrast, Policy B ${budgetB}.`;
   }
 
   function populateComparisonControls() {

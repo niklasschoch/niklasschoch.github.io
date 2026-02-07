@@ -476,7 +476,7 @@
   function fmtEur(value) {
     if (value == null) return "N/A";
     const millions = value / 1000;
-    return millions.toFixed(1) + " million EUR";
+    return Math.round(millions) + " million EUR";
   }
 
   function computeBudgetLine(policy, policyRows, mode, year) {
@@ -507,13 +507,10 @@
   function generateComparisonDescription(policyA, policyB, mode, year, rowsA, rowsB) {
     const descA = policyDescFragment(policyA.market, policyA.instrument, policyA.cbam, policyA.level);
     const descB = policyDescFragment(policyB.market, policyB.instrument, policyB.cbam, policyB.level);
-    const modeText = mode === "npv"
-      ? "as the discounted sum over all periods (NPV)"
-      : `at a single point in time (year ${year})`;
+    const timeFrame = mode === "npv" ? "over the next 30 years" : `in ${year}`;
     const budgetA = computeBudgetLine(policyA, rowsA, mode, year);
     const budgetB = computeBudgetLine(policyB, rowsB, mode, year);
-    const timeFrame = mode === "npv" ? " over the next 30 years" : ` in ${year}`;
-    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}). Values are compared ${modeText}. Policy A ${budgetA}${timeFrame}. In contrast, Policy B ${budgetB}.`;
+    return `This comparison shows the percentage change in emissions, leakage, consumer surplus, and industry profits when moving from Policy A (${descA}) to Policy B (${descB}) ${timeFrame}. Policy A ${budgetA}. In contrast, Policy B ${budgetB}.`;
   }
 
   function populateComparisonControls() {

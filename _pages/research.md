@@ -6,7 +6,7 @@ author_profile: true
 ---
 
 {% assign pubs = site.publications | sort: 'date' | reverse %}
-{% assign categories = "Publications,Working Paper,Work in Progress" | split: "," %}
+{% assign categories = "Publications,Working Paper,Work in Progress,Master thesis" | split: "," %}
 
 {% for category in categories %}
 ## {{ category }}

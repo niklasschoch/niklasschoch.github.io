@@ -58,7 +58,7 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Button row: Abstract first, then links, on one line */
+/* Button row: Abstract first, then links, on one line; abstract text on next line when open */
 .pub-buttons {
   display: inline-flex;
   flex-wrap: wrap;
@@ -66,10 +66,23 @@
   gap: 0.5rem;
 }
 
-/* Clickable abstract for publications – same line as link buttons */
+/* details doesn’t create a box – summary and abstract text become flex children of .pub-buttons */
 .pub-abstract {
-  display: inline-block;
-  margin: 0;
+  display: contents;
+}
+
+/* Keep Abstract button first, links second, abstract text last and full-width on its own row */
+.pub-abstract__toggle {
+  order: 0;
+}
+.pub-buttons > a {
+  order: 1;
+}
+.pub-abstract__text {
+  order: 2;
+  flex-basis: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 .pub-abstract__toggle {
   cursor: pointer;

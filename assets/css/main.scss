@@ -58,23 +58,19 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Clickable abstract for publications */
+/* Clickable abstract for publications – sits next to link buttons */
 .pub-abstract {
-  margin-top: 0.5rem;
+  display: inline;
+  margin-top: 0;
 }
 .pub-abstract__toggle {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.85rem;
-  color: var(--text-muted, #666);
-  background: var(--background-alt, #f5f5f5);
-  border: 1px solid var(--border-color, #ddd);
-  border-radius: 4px;
   list-style: none;
   user-select: none;
+  vertical-align: middle;
 }
 /* Hide the browser’s default disclosure arrow (the one on the right) */
 .pub-abstract summary.pub-abstract__toggle {
@@ -87,10 +83,6 @@
   display: none !important;
   font-size: 0;
   content: none;
-}
-.pub-abstract__toggle:hover {
-  background: var(--background-hover, #eee);
-  color: var(--text, #333);
 }
 .pub-abstract__arrow {
   font-size: 0.65rem;

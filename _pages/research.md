@@ -21,18 +21,19 @@ author_profile: true
     <br/><em>{{ item.citation }}</em>
   {% endif -%}
     
-    {% if item.links %}
+    {% if item.links or item.abstract %}
       <br/>
-      {% for link in item.links %}
-        <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener" style="margin-right: 0.5rem;">{{ link.label }}</a>
-      {% endfor %}
-    {% endif -%}
-    {% if item.abstract %}
-      <br/>
+      {% if item.abstract %}
       <details class="pub-abstract">
-        <summary class="pub-abstract__toggle">Abstract <span class="pub-abstract__arrow" aria-hidden="true">▼</span></summary>
+        <summary class="pub-abstract__toggle btn" style="margin-right: 0.5rem;">Abstract <span class="pub-abstract__arrow" aria-hidden="true">▼</span></summary>
         <p class="pub-abstract__text">{{ item.abstract }}</p>
       </details>
+      {% endif -%}
+      {% if item.links %}
+        {% for link in item.links %}
+          <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener" style="margin-right: 0.5rem;">{{ link.label }}</a>
+        {% endfor %}
+      {% endif -%}
     {% endif -%}
   </li>
 {% endfor %}

@@ -27,6 +27,13 @@ author_profile: true
         <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener" style="margin-right: 0.5rem;">{{ link.label }}</a>
       {% endfor %}
     {% endif -%}
+    {% if item.abstract %}
+      <br/>
+      <details class="pub-abstract">
+        <summary class="pub-abstract__toggle">Abstract <span class="pub-abstract__arrow" aria-hidden="true">▼</span></summary>
+        <p class="pub-abstract__text">{{ item.abstract }}</p>
+      </details>
+    {% endif -%}
   </li>
 {% endfor %}
 </ul>

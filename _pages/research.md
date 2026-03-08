@@ -23,17 +23,19 @@ author_profile: true
     
     {% if item.links or item.abstract %}
       <br/>
+      <span class="pub-buttons">
       {% if item.abstract %}
       <details class="pub-abstract">
-        <summary class="pub-abstract__toggle btn" style="margin-right: 0.5rem;">Abstract <span class="pub-abstract__arrow" aria-hidden="true">▼</span></summary>
+        <summary class="pub-abstract__toggle btn">Abstract <span class="pub-abstract__arrow" aria-hidden="true">▼</span></summary>
         <p class="pub-abstract__text">{{ item.abstract }}</p>
       </details>
       {% endif -%}
       {% if item.links %}
         {% for link in item.links %}
-          <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener" style="margin-right: 0.5rem;">{{ link.label }}</a>
+          <a href="{{ link.url }}" class="btn" target="_blank" rel="noopener">{{ link.label }}</a>
         {% endfor %}
       {% endif -%}
+      </span>
     {% endif -%}
   </li>
 {% endfor %}

@@ -209,8 +209,8 @@
   }
 
   function levelTraceLabel(level, instrument) {
-    if (instrument.toLowerCase() === "tax") return `Tax level ${level}`;
-    if (instrument.toLowerCase() === "subsidy") return `Subsidy Level ${level * 100}`;
+    if (instrument.toLowerCase() === "tax") return `Tax level ${Math.round(level)}`;
+    if (instrument.toLowerCase() === "subsidy") return `Subsidy Level ${Math.round(level * 100)}`;
     return `Level ${level}`;
   }
 

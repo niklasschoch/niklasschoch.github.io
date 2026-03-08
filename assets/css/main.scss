@@ -76,8 +76,17 @@
   list-style: none;
   user-select: none;
 }
+/* Hide the browser’s default disclosure arrow (the one on the right) */
+.pub-abstract summary.pub-abstract__toggle {
+  list-style: none;
+}
 .pub-abstract__toggle::-webkit-details-marker {
-  display: none;
+  display: none !important;
+}
+.pub-abstract__toggle::marker {
+  display: none !important;
+  font-size: 0;
+  content: none;
 }
 .pub-abstract__toggle:hover {
   background: var(--background-hover, #eee);

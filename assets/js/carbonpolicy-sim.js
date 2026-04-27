@@ -167,8 +167,8 @@
         const taxTxt = contextValue !== null ? ` and a carbon tax of ${Math.round(contextValue)} EUR per ton of CO2 emitted` : "";
         levelText = ` at a CAPEX subsidy of ${fmtSubsidyPct(level)}%${taxTxt}`;
       } else if (instrument.toLowerCase() === "oba") {
-        const bTxt = contextValue !== null ? ` with benchmark ${Number(contextValue).toFixed(2)}` : "";
-        levelText = ` at a carbon tax of ${Math.round(level)} EUR per ton of CO2 emitted${bTxt}`;
+        const bTxt = contextValue !== null ? ` and a benchmark of ${Number(contextValue).toFixed(2)}` : "";
+        levelText = ` for an output-based rebating, with a tax of ${Math.round(level)} EUR per ton of CO2 emitted${bTxt}`;
       } else {
         levelText = ` at level ${level}`;
       }
@@ -557,7 +557,7 @@
       ? (inst === "subsidy"
         ? `with a CAPEX subsidy of ${Math.round(level * 100)}% and tax level ${Math.round(contextValue)}`
         : inst === "oba"
-          ? `with output-based rebating benchmark ${Number(contextValue).toFixed(2)} and tax level ${Math.round(level)}`
+          ? `for an output-based rebating, with a tax of ${Math.round(level)} EUR per ton and a benchmark of ${Number(contextValue).toFixed(2)}`
           : `with a carbon tax level of ${Math.round(level)} EUR per ton`)
       : "";
     return `${marketText}, ${levelText}, ${cbamText}`;

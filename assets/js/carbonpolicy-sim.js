@@ -25,22 +25,27 @@
     return;
   }
 
-  const CSV_URL = "/assets/data/dashboard_paths.csv";
+  const CSV_URL = "/assets/data/dashboard_paths_robustness.csv";
 
   const elMarket = document.getElementById("ctrl-market");
   const elInstrument = document.getElementById("ctrl-instrument");
   const elCbam = document.getElementById("ctrl-cbam");
+  const elContextWrap = document.getElementById("ctrl-context-wrap");
+  const elContext = document.getElementById("ctrl-context");
+  const elContextLabel = document.getElementById("ctrl-context-label");
   const elLevel = document.getElementById("ctrl-level");
   const elLevelLabel = document.getElementById("ctrl-level-label");
   const elOutcome = document.getElementById("ctrl-outcome");
   const elDescription = document.getElementById("plot-description");
 
   // Check if all required DOM elements exist
-  if (!elMarket || !elInstrument || !elCbam || !elLevel || !elLevelLabel || !elOutcome) {
+  if (!elMarket || !elInstrument || !elCbam || !elContext || !elContextLabel || !elLevel || !elLevelLabel || !elOutcome) {
     console.error("Carbon Policy Simulator: Required DOM elements not found", {
       elMarket: !!elMarket,
       elInstrument: !!elInstrument,
       elCbam: !!elCbam,
+      elContext: !!elContext,
+      elContextLabel: !!elContextLabel,
       elLevel: !!elLevel,
       elLevelLabel: !!elLevelLabel,
       elOutcome: !!elOutcome
@@ -60,6 +65,31 @@
 
   function uniqSorted(arr) {
     return [...new Set(arr)].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  }
+
+  function instrumentKey(instrument) {
+    const inst = String(instrument || "").toLowerCase();
+    if (inst === "subsidy") return "subsidy";
+    if (inst === "oba") return "oba";
+    return "tax";
+  }
+
+  function getContextConfig(instrument) {
+    const key = instrumentKey(instrument);
+    if (key === "subsidy") {
+      return { field: "subsidy_tax_level", label: "Tax Level", formatter: v => String(Math.round(v)) };
+    }
+    if (key === "oba") {
+      return { field: "oba_benchmark", label: "OBA Benchmark", formatter: v => Number(v).toFixed(2) };
+    }
+    return null;
+  }
+
+  function getLevelConfig(instrument) {
+    const key = instrumentKey(instrument);
+    if (key === "subsidy") return { field: "subsidy_level", formatter: v => String(Math.round(v * 100)) };
+    if (key === "oba") return { field: "oba_tax_level", formatter: v => String(Math.round(v)) };
+    return { field: "tax_level", formatter: v => String(Math.round(v)) };
   }
 
   const TONNE_OUTCOMES = new Set([
@@ -105,7 +135,7 @@
     return labels[market] || market;
   }
 
-  function generateDescription(outcome, market, instrument, cbam, level) {
+  function generateDescription(outcome, market, instrument, cbam, contextValue, level) {
     const outcomeLabels = {
       "emissions_total": "domestic emissions",
       "profit_total": "total operating profits of domestic firms",
@@ -128,49 +158,76 @@
       if (instrument.toLowerCase() === "tax") {
         levelText = ` at a carbon tax of ${Math.round(level)} EUR per ton of CO2 emitted`;
       } else if (instrument.toLowerCase() === "subsidy") {
-        levelText = ` at a CAPEX subsidy of ${fmtSubsidyPct(level)}%`;
+        const taxTxt = contextValue !== null ? ` and a carbon tax of ${Math.round(contextValue)} EUR per ton of CO2 emitted` : "";
+        levelText = ` at a CAPEX subsidy of ${fmtSubsidyPct(level)}%${taxTxt}`;
+      } else if (instrument.toLowerCase() === "oba") {
+        const bTxt = contextValue !== null ? ` with benchmark ${Number(contextValue).toFixed(2)}` : "";
+        levelText = ` at a carbon tax of ${Math.round(level)} EUR per ton of CO2 emitted${bTxt}`;
       } else {
         levelText = ` at level ${level}`;
       }
     }
-    
-    // Add carbon tax note for subsidy scenarios
-    const carbonTaxNote = instrument.toLowerCase() === "subsidy" 
-      ? " The carbon tax set for the subsidy scenario is 60 per ton of CO2 emitted."
-      : "";
 
     const efficiencyNote = " Even without policy intervention, emissions decline naturally over time due to some efficiency progress.";
     
     const descriptions = {
-      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic emissions represent the carbon dioxide equivalent emitted in megatonnes by domestic producers.${efficiencyNote}${carbonTaxNote}`,
-      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Profit represents the variable operating profits of domestic producers. The plotted values do not account for investment cost. The model does not account for fixed operating and overhead costs.${carbonTaxNote}`,
-      "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.${carbonTaxNote}`,
-      "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.${carbonTaxNote}`,
-      "price": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.${carbonTaxNote}`,
-      "quantityProduced_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic quantity represents the total amount of cement produced domestically.${carbonTaxNote}`,
-      "leakage": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Leakage represents carbon emissions embedded in cement imports.${carbonTaxNote}`
+      "emissions_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic emissions represent the carbon dioxide equivalent emitted in megatonnes by domestic producers.${efficiencyNote}`,
+      "profit_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Profit represents the variable operating profits of domestic producers. The plotted values do not account for investment cost. The model does not account for fixed operating and overhead costs.`,
+      "marketQuantity": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Market quantity represents the total amount of cement produced by domestic producers.`,
+      "imports": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Imports represent the quantity of cement imported.`,
+      "price": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. The price represents the market equilibrium price of cement, accounting for domestic production and imports.`,
+      "quantityProduced_total": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Domestic quantity represents the total amount of cement produced domestically.`,
+      "leakage": `This plot shows the evolution of ${outcomeDesc} in ${marketText} ${cbamText}${levelText}. Leakage represents carbon emissions embedded in cement imports.`
     };
     
-    return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market ${cbamText}${levelText}.${carbonTaxNote}`;
+    return descriptions[outcome] || `This plot shows the evolution of ${outcomeDesc} in the ${marketText} market ${cbamText}${levelText}.`;
   }
 
   function filterRows() {
-    if (!elMarket || !elInstrument || !elCbam || !elLevel || rows.length === 0) {
+    if (!elMarket || !elInstrument || !elCbam || !elContext || !elContextLabel || !elLevel || rows.length === 0) {
       return [];
     }
 
     const market = elMarket.value;
     const instrument = elInstrument.value;
     const cbam = Number(elCbam.value);
-
-    // update discrete level grid for this selection
-    const candidates = rows.filter(r =>
+    const contextCfg = getContextConfig(instrument);
+    const levelCfg = getLevelConfig(instrument);
+    let contextVal = null;
+    let candidates = rows.filter(r =>
       r.market === market &&
       r.instrument === instrument &&
       r.cbam === cbam
     );
 
-    levelGrid = uniqSorted(candidates.map(r => r.level));
+    if (contextCfg) {
+      if (elContextWrap) {
+        elContextWrap.style.display = "flex";
+      }
+      elContextLabel.textContent = contextCfg.label;
+      const contextCandidates = candidates.filter(r => r[contextCfg.field] !== null);
+      const contextGrid = uniqSorted(contextCandidates.map(r => r[contextCfg.field]));
+      const oldContext = Number(elContext.value);
+      elContext.innerHTML = contextGrid
+        .map(v => `<option value="${v}">${contextCfg.formatter(v)}</option>`)
+        .join("");
+      if (contextGrid.length > 0) {
+        if (Number.isFinite(oldContext) && contextGrid.includes(oldContext)) {
+          elContext.value = String(oldContext);
+        } else {
+          elContext.value = String(contextGrid[0]);
+        }
+      }
+      contextVal = contextGrid.length > 0 ? Number(elContext.value) : null;
+      candidates = contextCandidates.filter(r => r[contextCfg.field] === contextVal);
+    } else {
+      if (elContextWrap) {
+        elContextWrap.style.display = "none";
+      }
+      elContext.innerHTML = "";
+    }
+
+    levelGrid = uniqSorted(candidates.map(r => r[levelCfg.field]));
 
     // slider indexes levels
     elLevel.min = 0;
@@ -182,10 +239,10 @@
     elLevel.value = Math.max(0, idx);
 
     const level = levelGrid.length ? levelGrid[Number(elLevel.value)] : null;
-    elLevelLabel.textContent = (level === null) ? "" : (instrument.toLowerCase() === "subsidy" ? String(Math.round(level * 100)) : String(Math.round(level)));
+    elLevelLabel.textContent = (level === null) ? "" : levelCfg.formatter(level);
 
     // final filtered set including level
-    return candidates.filter(r => r.level === level);
+    return candidates.filter(r => r[levelCfg.field] === level);
   }
 
   function series(data, yKey) {
@@ -252,6 +309,9 @@
     const market = elMarket.value;
     const instrument = elInstrument.value;
     const cbam = Number(elCbam.value);
+    const contextCfg = getContextConfig(instrument);
+    const levelCfg = getLevelConfig(instrument);
+    const contextVal = contextCfg ? Number(elContext.value) : null;
     const level = levelGrid.length > 0 ? levelGrid[Number(elLevel.value)] : null;
 
     if (!outcome || data.length === 0) {
@@ -274,9 +334,11 @@
     const yPlot = scale(s.y);
 
     // Baseline (level 0) for same market, instrument, cbam – include when level !== 0
-    const baselineRows = rows.filter(r =>
-      r.market === market && r.instrument === instrument && r.cbam === cbam && r.level === 0
-    );
+    const baselineRows = rows.filter(r => {
+      if (!(r.market === market && r.instrument === instrument && r.cbam === cbam)) return false;
+      if (contextCfg && r[contextCfg.field] !== contextVal) return false;
+      return r[levelCfg.field] === 0;
+    });
     const addBaseline = baselineRows.length > 0 && level !== 0;
     let sBaseline = null;
     if (addBaseline) {
@@ -387,7 +449,7 @@
 
     // Update description
     if (elDescription) {
-      elDescription.textContent = generateDescription(outcome, market, instrument, cbam, level);
+      elDescription.textContent = generateDescription(outcome, market, instrument, cbam, contextVal, level);
     }
   }
 
@@ -442,33 +504,55 @@
     else if (instruments.length > 0) elInstrument.value = instruments[0];
     
     elCbam.value = "0";
+    elContext.value = "";
     elLevel.value = "0";
     
     if (validOutcomes.length > 0) {
       elOutcome.value = validOutcomes[0].key;
     }
+    filterRows();
   }
 
-  function getLevelGrid(market, instrument, cbam) {
+  function getContextGrid(market, instrument, cbam) {
+    const cfg = getContextConfig(instrument);
+    if (!cfg) return [];
     const candidates = rows.filter(r =>
-      r.market === market && r.instrument === instrument && r.cbam === cbam
+      r.market === market && r.instrument === instrument && r.cbam === cbam && r[cfg.field] !== null
     );
-    return uniqSorted(candidates.map(r => r.level));
+    return uniqSorted(candidates.map(r => r[cfg.field]));
   }
 
-  function policyLabel(market, instrument, cbam, level) {
+  function getLevelGrid(market, instrument, cbam, contextValue) {
+    const cfg = getLevelConfig(instrument);
+    const ctx = getContextConfig(instrument);
+    const candidates = rows.filter(r =>
+      r.market === market &&
+      r.instrument === instrument &&
+      r.cbam === cbam &&
+      (!ctx || r[ctx.field] === contextValue) &&
+      r[cfg.field] !== null
+    );
+    return uniqSorted(candidates.map(r => r[cfg.field]));
+  }
+
+  function policyLabel(market, instrument, cbam, contextValue, level) {
     const cbamText = cbam === 1 ? "CBAM" : "no CBAM";
-    const levelText = instrument.toLowerCase() === "subsidy"
-      ? `${Math.round(level * 100)}%` : `${Math.round(level)}`;
-    return `${market} ${instrument} ${levelText} ${cbamText}`;
+    const lvlTxt = getLevelConfig(instrument).formatter(level);
+    const ctxCfg = getContextConfig(instrument);
+    const ctxTxt = (ctxCfg && contextValue != null) ? ` ${ctxCfg.label}=${ctxCfg.formatter(contextValue)}` : "";
+    return `${market} ${instrument}${ctxTxt} ${lvlTxt} ${cbamText}`;
   }
 
-  function policyDescFragment(market, instrument, cbam, level) {
+  function policyDescFragment(market, instrument, cbam, contextValue, level) {
     const marketText = marketLabel(market);
     const cbamText = cbam === 1 ? "with CBAM" : "without CBAM";
-    const isSubsidy = instrument.toLowerCase() === "subsidy";
+    const inst = instrument.toLowerCase();
     const levelText = level != null
-      ? (isSubsidy ? `with a CAPEX subsidy of ${Math.round(level * 100)}% (and a carbon tax of 60\u20AC)` : `with a carbon tax level of ${Math.round(level)} EUR per ton`)
+      ? (inst === "subsidy"
+        ? `with a CAPEX subsidy of ${Math.round(level * 100)}% and tax level ${Math.round(contextValue)}`
+        : inst === "oba"
+          ? `with OBA benchmark ${Number(contextValue).toFixed(2)} and tax level ${Math.round(level)}`
+          : `with a carbon tax level of ${Math.round(level)} EUR per ton`)
       : "";
     return `${marketText}, ${levelText}, ${cbamText}`;
   }
@@ -505,8 +589,8 @@
   }
 
   function generateComparisonDescription(policyA, policyB, mode, year, rowsA, rowsB) {
-    const descA = policyDescFragment(policyA.market, policyA.instrument, policyA.cbam, policyA.level);
-    const descB = policyDescFragment(policyB.market, policyB.instrument, policyB.cbam, policyB.level);
+    const descA = policyDescFragment(policyA.market, policyA.instrument, policyA.cbam, policyA.contextValue, policyA.level);
+    const descB = policyDescFragment(policyB.market, policyB.instrument, policyB.cbam, policyB.contextValue, policyB.level);
     const timeFrame = mode === "npv" ? "over the next 30 years" : `in ${year}`;
     const budgetA = computeBudgetLine(policyA, rowsA, mode, year);
     const budgetB = computeBudgetLine(policyB, rowsB, mode, year);
@@ -523,8 +607,9 @@
       const elM = document.getElementById(`comp-market-${suffix}`);
       const elI = document.getElementById(`comp-instrument-${suffix}`);
       const elC = document.getElementById(`comp-cbam-${suffix}`);
+      const elCtx = document.getElementById(`comp-context-${suffix}`);
       const elL = document.getElementById(`comp-level-${suffix}`);
-      if (!elM || !elI || !elC || !elL) return;
+      if (!elM || !elI || !elC || !elCtx || !elL) return;
       elM.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join("");
       elI.innerHTML = instruments.map(i => `<option value="${i}">${i}</option>`).join("");
       updateComparisonLevelOptions(suffix);
@@ -545,6 +630,7 @@
       const elM = document.getElementById(`comp-market-${suffix}`);
       const elI = document.getElementById(`comp-instrument-${suffix}`);
       const elC = document.getElementById(`comp-cbam-${suffix}`);
+      const elCtx = document.getElementById(`comp-context-${suffix}`);
       const elL = document.getElementById(`comp-level-${suffix}`);
       if (elM && elM.querySelector('option[value="Total"]')) elM.value = "Total";
       else if (elM && elM.options.length) elM.value = elM.options[0].value;
@@ -562,19 +648,39 @@
     const elM = document.getElementById(`comp-market-${suffix}`);
     const elI = document.getElementById(`comp-instrument-${suffix}`);
     const elC = document.getElementById(`comp-cbam-${suffix}`);
+    const elCtx = document.getElementById(`comp-context-${suffix}`);
+    const elCtxWrap = document.getElementById(`comp-context-wrap-${suffix}`);
+    const elCtxLabel = document.getElementById(`comp-context-label-${suffix}`);
     const elL = document.getElementById(`comp-level-${suffix}`);
-    if (!elM || !elI || !elC || !elL) return;
-
-    // Get the displayed level value from the currently selected option before rebuilding
-    const selectedOption = elL.options[elL.selectedIndex];
-    const oldDisplayedLevel = selectedOption ? Number(selectedOption.textContent) : null;
+    if (!elM || !elI || !elC || !elCtx || !elL) return;
 
     const market = elM.value;
     const instrument = elI.value;
     const cbam = Number(elC.value);
-    const grid = getLevelGrid(market, instrument, cbam);
-    const isSubsidy = instrument.toLowerCase() === "subsidy";
-    const fmtLevel = (l) => isSubsidy ? Math.round(l * 100) : Math.round(l);
+    const ctxCfg = getContextConfig(instrument);
+    const lvlCfg = getLevelConfig(instrument);
+    let contextValue = null;
+    if (ctxCfg) {
+      if (elCtxWrap) elCtxWrap.style.display = "flex";
+      if (elCtxLabel) elCtxLabel.textContent = ctxCfg.label;
+      const oldContext = Number(elCtx.value);
+      const contextGrid = getContextGrid(market, instrument, cbam);
+      elCtx.innerHTML = contextGrid.map(v => `<option value="${v}">${ctxCfg.formatter(v)}</option>`).join("");
+      if (contextGrid.length > 0) {
+        if (Number.isFinite(oldContext) && contextGrid.includes(oldContext)) elCtx.value = String(oldContext);
+        else elCtx.value = String(contextGrid[0]);
+      }
+      contextValue = contextGrid.length > 0 ? Number(elCtx.value) : null;
+    } else {
+      if (elCtxWrap) elCtxWrap.style.display = "none";
+      elCtx.innerHTML = "";
+    }
+
+    // Get the displayed level value from the currently selected option before rebuilding
+    const selectedOption = elL.options[elL.selectedIndex];
+    const oldDisplayedLevel = selectedOption ? Number(selectedOption.textContent) : null;
+    const grid = getLevelGrid(market, instrument, cbam, contextValue);
+    const fmtLevel = (l) => Number(lvlCfg.formatter(l));
     elL.innerHTML = grid.map((lvl, i) =>
       `<option value="${i}">${fmtLevel(lvl)}</option>`
     ).join("");
@@ -592,24 +698,30 @@
     const elM = document.getElementById(`comp-market-${suffix}`);
     const elI = document.getElementById(`comp-instrument-${suffix}`);
     const elC = document.getElementById(`comp-cbam-${suffix}`);
+    const elCtx = document.getElementById(`comp-context-${suffix}`);
     const elL = document.getElementById(`comp-level-${suffix}`);
-    if (!elM || !elI || !elC || !elL) return null;
+    if (!elM || !elI || !elC || !elCtx || !elL) return null;
     const market = elM.value;
     const instrument = elI.value;
     const cbam = Number(elC.value);
-    const grid = getLevelGrid(market, instrument, cbam);
+    const contextCfg = getContextConfig(instrument);
+    const contextValue = contextCfg ? Number(elCtx.value) : null;
+    const grid = getLevelGrid(market, instrument, cbam, contextValue);
     const levelIdx = Math.min(Number(elL.value || 0), grid.length - 1);
     const level = grid.length ? grid[levelIdx] : null;
-    return { market, instrument, cbam, level };
+    return { market, instrument, cbam, contextValue, level };
   }
 
   function getPolicyRows(policy) {
     if (!policy || policy.level == null) return [];
+    const ctxCfg = getContextConfig(policy.instrument);
+    const lvlCfg = getLevelConfig(policy.instrument);
     return rows.filter(r =>
       r.market === policy.market &&
       r.instrument === policy.instrument &&
       r.cbam === policy.cbam &&
-      r.level === policy.level
+      (!ctxCfg || r[ctxCfg.field] === policy.contextValue) &&
+      r[lvlCfg.field] === policy.level
     );
   }
 
@@ -727,6 +839,7 @@
     elMarket.addEventListener("change", draw);
     elInstrument.addEventListener("change", draw);
     elCbam.addEventListener("change", draw);
+    elContext.addEventListener("change", draw);
     elLevel.addEventListener("input", draw);
     elOutcome.addEventListener("change", draw);
     const btnCsv = document.getElementById("btn-download-csv");
@@ -736,12 +849,17 @@
       const elM = document.getElementById(`comp-market-${suffix}`);
       const elI = document.getElementById(`comp-instrument-${suffix}`);
       const elC = document.getElementById(`comp-cbam-${suffix}`);
+      const elCtx = document.getElementById(`comp-context-${suffix}`);
       const elL = document.getElementById(`comp-level-${suffix}`);
       [elM, elI, elC].forEach(el => {
         if (el) el.addEventListener("change", () => {
           updateComparisonLevelOptions(suffix);
           drawComparison();
         });
+      });
+      if (elCtx) elCtx.addEventListener("change", () => {
+        updateComparisonLevelOptions(suffix);
+        drawComparison();
       });
       if (elL) elL.addEventListener("change", drawComparison);
     });
@@ -779,22 +897,27 @@
 
     rows = parsed.data.map(r => ({
       market: String(r.market),
-      instrument: String(r.instrument),
+      instrument: String(r.instrument || r.scenario),
       cbam: parseNum(r.cbam),
       level: parseNum(r.level),
+      tax_level: parseNum(r.tax_level),
+      subsidy_tax_level: parseNum(r.subsidy_tax_level),
+      subsidy_level: parseNum(r.subsidy_level),
+      oba_benchmark: parseNum(r.oba_benchmark),
+      oba_tax_level: parseNum(r.oba_tax_level),
       time: parseNum(r.time),
 
       price: parseNum(r.price),
-      consumerSurplus: parseNum(r.consumerSurplus),
+      consumerSurplus: parseNum(r.consumerSurplus ?? r.consumersurplus),
 
-      emissions_total: parseNum(r.emissions_total),
-      profit_total: parseNum(r.profit_total),
-      marketQuantity: parseNum(r.marketQuantity),
+      emissions_total: parseNum(r.emissions_total ?? r.emissionstotal),
+      profit_total: parseNum(r.profit_total ?? r.profittotal),
+      marketQuantity: parseNum(r.marketQuantity ?? r.marketquantity),
       imports: parseNum(r.imports),
-      quantityProduced_total: parseNum(r.quantityProduced_total),
+      quantityProduced_total: parseNum(r.quantityProduced_total ?? r.quantityproduced_total ?? r.quantityproducedtotal),
       leakage: parseNum(r.leakage),
-      carbonRevenue: parseNum(r.carbonRevenue),
-      investCost_total: parseNum(r.investCost_total),
+      carbonRevenue: parseNum(r.carbonRevenue ?? r.carbonrevenue),
+      investCost_total: parseNum(r.investCost_total ?? r.investcost_total ?? r.investcosttotal),
     })).filter(r =>
       r.market && r.instrument &&
       r.cbam !== null && r.level !== null && r.time !== null

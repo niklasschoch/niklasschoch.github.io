@@ -33,6 +33,11 @@ I plan to add more scenarios and industries over time. If you have any questions
     </select>
   </label>
 
+  <label id="ctrl-context-wrap">
+    <span id="ctrl-context-label">Tax Level</span>
+    <select id="ctrl-context"></select>
+  </label>
+
   <label>
     <span>Level</span>
     <input id="ctrl-level" type="range" min="0" max="0" step="1" />
@@ -57,6 +62,7 @@ I plan to add more scenarios and industries over time. If you have any questions
     <label><span>Market</span><select id="comp-market-a"></select></label>
     <label><span>Instrument</span><select id="comp-instrument-a"></select></label>
     <label><span>CBAM</span><select id="comp-cbam-a"><option value="0">Off</option><option value="1">On</option></select></label>
+    <label id="comp-context-wrap-a"><span id="comp-context-label-a">Tax Level</span><select id="comp-context-a"></select></label>
     <label><span>Level</span><select id="comp-level-a"></select></label>
   </div>
   <div class="comparison-policy">
@@ -64,6 +70,7 @@ I plan to add more scenarios and industries over time. If you have any questions
     <label><span>Market</span><select id="comp-market-b"></select></label>
     <label><span>Instrument</span><select id="comp-instrument-b"></select></label>
     <label><span>CBAM</span><select id="comp-cbam-b"><option value="0">Off</option><option value="1">On</option></select></label>
+    <label id="comp-context-wrap-b"><span id="comp-context-label-b">Tax Level</span><select id="comp-context-b"></select></label>
     <label><span>Level</span><select id="comp-level-b"></select></label>
   </div>
   <div class="comparison-mode">

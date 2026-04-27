@@ -74,13 +74,19 @@
     return "tax";
   }
 
+  function instrumentLabel(instrument) {
+    return String(instrument || "").toLowerCase() === "oba"
+      ? "Output-based rebating"
+      : instrument;
+  }
+
   function getContextConfig(instrument) {
     const key = instrumentKey(instrument);
     if (key === "subsidy") {
       return { field: "subsidy_tax_level", label: "Tax Level", formatter: v => String(Math.round(v)) };
     }
     if (key === "oba") {
-      return { field: "oba_benchmark", label: "OBA Benchmark", formatter: v => Number(v).toFixed(2) };
+      return { field: "oba_benchmark", label: "Benchmark", formatter: v => Number(v).toFixed(2) };
     }
     return null;
   }
@@ -468,7 +474,7 @@
     }
 
     elMarket.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join("");
-    elInstrument.innerHTML = instruments.map(inst => `<option value="${inst}">${inst}</option>`).join("");
+    elInstrument.innerHTML = instruments.map(inst => `<option value="${inst}">${instrumentLabel(inst)}</option>`).join("");
 
     // Populate outcome dropdown with available metrics
     const availableOutcomes = [
@@ -540,7 +546,7 @@
     const lvlTxt = getLevelConfig(instrument).formatter(level);
     const ctxCfg = getContextConfig(instrument);
     const ctxTxt = (ctxCfg && contextValue != null) ? ` ${ctxCfg.label}=${ctxCfg.formatter(contextValue)}` : "";
-    return `${market} ${instrument}${ctxTxt} ${lvlTxt} ${cbamText}`;
+    return `${market} ${instrumentLabel(instrument)}${ctxTxt} ${lvlTxt} ${cbamText}`;
   }
 
   function policyDescFragment(market, instrument, cbam, contextValue, level) {
@@ -551,7 +557,7 @@
       ? (inst === "subsidy"
         ? `with a CAPEX subsidy of ${Math.round(level * 100)}% and tax level ${Math.round(contextValue)}`
         : inst === "oba"
-          ? `with OBA benchmark ${Number(contextValue).toFixed(2)} and tax level ${Math.round(level)}`
+          ? `with output-based rebating benchmark ${Number(contextValue).toFixed(2)} and tax level ${Math.round(level)}`
           : `with a carbon tax level of ${Math.round(level)} EUR per ton`)
       : "";
     return `${marketText}, ${levelText}, ${cbamText}`;
@@ -611,7 +617,7 @@
       const elL = document.getElementById(`comp-level-${suffix}`);
       if (!elM || !elI || !elC || !elCtx || !elL) return;
       elM.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join("");
-      elI.innerHTML = instruments.map(i => `<option value="${i}">${i}</option>`).join("");
+      elI.innerHTML = instruments.map(i => `<option value="${i}">${instrumentLabel(i)}</option>`).join("");
       updateComparisonLevelOptions(suffix);
     });
 

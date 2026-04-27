@@ -268,6 +268,7 @@
   function baselineLabel(instrument) {
     if (instrument.toLowerCase() === "tax") return "No Tax";
     if (instrument.toLowerCase() === "subsidy") return "No Subsidy";
+    if (instrument.toLowerCase() === "oba") return "No Tax";
     return "Baseline";
   }
 

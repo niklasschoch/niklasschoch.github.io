@@ -11,7 +11,7 @@ locale                   : "en-US"
 title                    : "Niklas Schoch"
 title_separator          : "-"
 name                     : &name "Niklas Schoch"
-description              : &description "PhD student in Economics"
+description              : &description "Postdoctoral Researcher, University of Geneva"
 url                      : https://niklasschoch.github.io
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "niklasschoch/niklasschoch.github.io"
@@ -23,9 +23,9 @@ author:
   # Biographic information
   avatar           : "ProfilePicture.jpg"
   name             : "Niklas Schoch"
-  bio              : "PhD student in Economics"
-  location         : "Paris, France"
-  employer         : "Sciences Po Paris"
+  bio              : "Postdoctoral Researcher, University of Geneva"
+  location         : "Geneva, Switzerland"
+  employer         : "University of Geneva"
   uri              : # URL
   email            : "niklas.schoch@sciencespo.fr" 
 

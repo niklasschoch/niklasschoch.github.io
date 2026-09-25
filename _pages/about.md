@@ -13,4 +13,6 @@ During the second year of the PhD, I joined the International Energy Agency (IEA
 
 Specifically, I use structural methods to study the dynamics of green technology adoption in concentrated industries under varying environmental regulations. Additionally, I work on the market design of emissions trading systems. Earlier work focused on empirical evaluations of the local economic impacts of wind power deployment and the emission-reducing effects of international climate finance using econometric inference.
 
+I am on the 2026/2027 job market. Feel free to also check the research on my amazing wife [Sophia](https://sites.google.com/view/sophiapraetorius/about){:target="_blank"}.
+
 If you'd like to get in touch, feel free to reach out at **niklas.schoch@unige.ch**.

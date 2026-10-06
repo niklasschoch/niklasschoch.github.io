@@ -7,9 +7,9 @@ redirect_from:
   - /about.html
 ---
 
-I’m a Postdoctoral Researcher at Graduate School of Economics and Management at the University of Geneva. Before, I completed my PhD in economics at Sciences Po Paris under the supervision of Johannes Boehm and Stefan Pollinger. Before, I obtained my master's degree in Economics from the University of Mannheim and worked as an energy policy consultant at the Institute of Energy Economics (EWI) in Cologne. 
+I’m a Postdoctoral Researcher at Graduate School of Economics and Management at the University of Geneva. I completed my PhD in economics at Sciences Po Paris under the supervision of Johannes Boehm and Stefan Pollinger. Before, I obtained my master's degree in Economics from the University of Mannheim and worked as an energy policy consultant at the Institute of Energy Economics (EWI) in Cologne. 
 
-My research lies at the intersection of environmental economics and industrial organization. Specifically, I use structural methods to study the dynamics of green technology adoption in concentrated industries under varying environmental regulations. Additionally, I work on the market design of emissions trading systems. Earlier work focused on empirical evaluations of the local economic impacts of wind power deployment and the emission-reducing effects of international climate finance using econometric inference.
+My research lies at the intersection of environmental economics and industrial organization. Specifically, I use structural methods to study the dynamics of green technology adoption in concentrated industries under varying environmental regulations. Additionally, I work on the market design of emissions trading systems. Earlier publications focused on empirical evaluations of the local economic impacts of wind power deployment and the emission-reducing effects of international climate finance using econometric inference.
 
 During the second year of the PhD, I joined the International Energy Agency (IEA) as a part-time Junior Energy Analyst in the Power Markets Division. I was also fortunate to spend a semester of my third year at Columbia University, hosted by Gautam Gowrisankaran.
 

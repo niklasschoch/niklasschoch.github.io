@@ -1,5 +1,5 @@
 ---
-title: "Climate Policy with Industry Concentration: The Role of Technology Adoption"
+title: "Climate Policy, Industry Concentration and Technology Adoption: Taxes, Subsidies and Rebates"
 date: 2099-01-01
 collection: publications
 category: Working Paper

@@ -13,6 +13,6 @@ My research lies at the intersection of environmental economics and industrial o
 
 During the second year of the PhD, I joined the International Energy Agency (IEA) as a part-time Junior Energy Analyst in the Power Markets Division. I was also fortunate to spend a semester of my third year at Columbia University, hosted by Gautam Gowrisankaran.
 
-I am on the 2026/2027 job market. Feel free to also check the research of my amazing wife [Sophia](https://sites.google.com/view/sophiapraetorius/about){:target="_blank"}.
+Feel free to also check the research of my amazing wife [Sophia](https://sites.google.com/view/sophiapraetorius/about){:target="_blank"}.
 
 If you'd like to get in touch, feel free to reach out at **niklas.schoch@unige.ch**.

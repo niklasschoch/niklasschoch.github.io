@@ -25,7 +25,7 @@
     return;
   }
 
-  const CSV_URL = "/assets/data/dashboard_paths_robustness.csv";
+  const CSV_URL = "/assets/data/dashboard_paths.csv";
 
   const elMarket = document.getElementById("ctrl-market");
   const elInstrument = document.getElementById("ctrl-instrument");
@@ -56,7 +56,12 @@
   }
 
   let rows = [];
+  let rowsByGroup = new Map(); // "market|instrument|cbam" -> rows
   let levelGrid = []; // discrete levels for current (market,instrument,cbam)
+
+  function groupRows(market, instrument, cbam) {
+    return rowsByGroup.get(`${market}|${instrument}|${cbam}`) || [];
+  }
 
   function parseNum(x) {
     const v = Number(x);
@@ -80,22 +85,24 @@
       : instrument;
   }
 
+  // In the CSV, "level" is the tax rate (Tax), the subsidy share (Subsidy) or the
+  // benchmark (OBA); "tax" is the accompanying carbon tax.
   function getContextConfig(instrument) {
     const key = instrumentKey(instrument);
     if (key === "subsidy") {
-      return { field: "subsidy_tax_level", label: "Tax Level", formatter: v => String(Math.round(v)) };
+      return { field: "tax", label: "Tax Level", formatter: v => String(Math.round(v)) };
     }
     if (key === "oba") {
-      return { field: "oba_benchmark", label: "Benchmark", formatter: v => Number(v).toFixed(2) };
+      return { field: "level", label: "Benchmark", formatter: v => Number(v).toFixed(2) };
     }
     return null;
   }
 
   function getLevelConfig(instrument) {
     const key = instrumentKey(instrument);
-    if (key === "subsidy") return { field: "subsidy_level", formatter: v => String(Math.round(v * 100)) };
-    if (key === "oba") return { field: "oba_tax_level", formatter: v => String(Math.round(v)) };
-    return { field: "tax_level", formatter: v => String(Math.round(v)) };
+    if (key === "subsidy") return { field: "level", formatter: v => String(Math.round(v * 100)) };
+    if (key === "oba") return { field: "tax", formatter: v => String(Math.round(v)) };
+    return { field: "level", formatter: v => String(Math.round(v)) };
   }
 
   const TONNE_OUTCOMES = new Set([
@@ -200,11 +207,7 @@
     const contextCfg = getContextConfig(instrument);
     const levelCfg = getLevelConfig(instrument);
     let contextVal = null;
-    let candidates = rows.filter(r =>
-      r.market === market &&
-      r.instrument === instrument &&
-      r.cbam === cbam
-    );
+    let candidates = groupRows(market, instrument, cbam);
 
     if (contextCfg) {
       if (elContextWrap) {
@@ -341,8 +344,7 @@
     const yPlot = scale(s.y);
 
     // Baseline (level 0) for same market, instrument, cbam – include when level !== 0
-    const baselineRows = rows.filter(r => {
-      if (!(r.market === market && r.instrument === instrument && r.cbam === cbam)) return false;
+    const baselineRows = groupRows(market, instrument, cbam).filter(r => {
       if (contextCfg && r[contextCfg.field] !== contextVal) return false;
       return r[levelCfg.field] === 0;
     });
@@ -523,19 +525,14 @@
   function getContextGrid(market, instrument, cbam) {
     const cfg = getContextConfig(instrument);
     if (!cfg) return [];
-    const candidates = rows.filter(r =>
-      r.market === market && r.instrument === instrument && r.cbam === cbam && r[cfg.field] !== null
-    );
+    const candidates = groupRows(market, instrument, cbam).filter(r => r[cfg.field] !== null);
     return uniqSorted(candidates.map(r => r[cfg.field]));
   }
 
   function getLevelGrid(market, instrument, cbam, contextValue) {
     const cfg = getLevelConfig(instrument);
     const ctx = getContextConfig(instrument);
-    const candidates = rows.filter(r =>
-      r.market === market &&
-      r.instrument === instrument &&
-      r.cbam === cbam &&
+    const candidates = groupRows(market, instrument, cbam).filter(r =>
       (!ctx || r[ctx.field] === contextValue) &&
       r[cfg.field] !== null
     );
@@ -723,10 +720,7 @@
     if (!policy || policy.level == null) return [];
     const ctxCfg = getContextConfig(policy.instrument);
     const lvlCfg = getLevelConfig(policy.instrument);
-    return rows.filter(r =>
-      r.market === policy.market &&
-      r.instrument === policy.instrument &&
-      r.cbam === policy.cbam &&
+    return groupRows(policy.market, policy.instrument, policy.cbam).filter(r =>
       (!ctxCfg || r[ctxCfg.field] === policy.contextValue) &&
       r[lvlCfg.field] === policy.level
     );
@@ -904,14 +898,10 @@
 
     rows = parsed.data.map(r => ({
       market: String(r.market),
-      instrument: String(r.instrument || r.scenario),
+      instrument: String(r.instrument),
       cbam: parseNum(r.cbam),
       level: parseNum(r.level),
-      tax_level: parseNum(r.tax_level),
-      subsidy_tax_level: parseNum(r.subsidy_tax_level),
-      subsidy_level: parseNum(r.subsidy_level),
-      oba_benchmark: parseNum(r.oba_benchmark),
-      oba_tax_level: parseNum(r.oba_tax_level),
+      tax: parseNum(r.tax),
       time: parseNum(r.time),
 
       price: parseNum(r.price),
@@ -932,6 +922,13 @@
 
     if (rows.length === 0) {
       throw new Error("No valid data rows found in CSV");
+    }
+
+    rowsByGroup = new Map();
+    for (const r of rows) {
+      const key = `${r.market}|${r.instrument}|${r.cbam}`;
+      if (!rowsByGroup.has(key)) rowsByGroup.set(key, []);
+      rowsByGroup.get(key).push(r);
     }
 
     console.log(`Carbon Policy Simulator: Loaded ${rows.length} rows successfully`);
